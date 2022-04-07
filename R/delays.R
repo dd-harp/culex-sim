@@ -1,53 +1,4 @@
 # --------------------------------------------------------------------------------
-#   ODEs describing change in delay duration
-# --------------------------------------------------------------------------------
-
-#' @title Differential equations describing change in delays
-#' @description This function is meant to be passed to [deSolve::ode].
-#' @param t time
-#' @param y state
-#' @param params a list of parameters
-#' @export
-tau_diffeqn <- function(t, y, params){
-  
-  # state variables
-  DE <- y[1] # tau_E(t)
-  DL <- y[2] # tau_L(t)
-  DP <- y[3] # tau_P(t)
-  
-  # (lagged) temperature
-  temp <- temperature(t, params)
-  temp_E <- temperature(t - DE, params)
-  temp_L <- temperature(t - DL, params)
-  temp_P <- temperature(t - DP, params)
-  
-  # (lagged) development
-  larvae_maturation <- larvae_maturation_rate(temp,params)
-  larvae_maturation_L <- larvae_maturation_rate(temp_L,params)
-  
-  egg_maturation <- egg_maturation_rate(temp,params)
-  egg_maturation_E <- egg_maturation_rate(temp_E,params)
-  
-  pupae_maturation <- pupae_maturation_rate(temp,params)
-  pupae_maturation_P <- pupae_maturation_rate(temp_P,params)
-  
-  # DDEs describing change in state duration
-  dDEdt = 1 - egg_maturation/egg_maturation_E
-  dDLdt = 1 - larvae_maturation/larvae_maturation_L
-  dDPdt = 1 - pupae_maturation/pupae_maturation_P
-  
-  # DDE system
-  du <- rep(NaN, 3)
-  
-  du[1] = dDEdt # tau_E(t)
-  du[2] = dDLdt # tau_L(t)
-  du[3] = dDPdt # tau_P(t)
-  
-  return(list(du))
-}
-
-
-# --------------------------------------------------------------------------------
 #   external forcing
 # --------------------------------------------------------------------------------
 
@@ -77,7 +28,9 @@ temperature <- function(t, pars){
 #   lifecycle stage progression rates
 # --------------------------------------------------------------------------------
 
-#' @noRd
+#' @title Egg maturation rate
+#' @param temp temperature
+#' @param pars a list
 #' @export
 egg_maturation_rate <- function(temp, pars){
   
@@ -98,7 +51,9 @@ egg_maturation_rate <- function(temp, pars){
   return(egg_maturation)
 }
 
-#' @noRd
+#' @title Larvae maturation rate
+#' @param temp temperature
+#' @param pars a list
 #' @export
 larvae_maturation_rate <- function(temp, pars){
   
@@ -119,7 +74,9 @@ larvae_maturation_rate <- function(temp, pars){
   return(larvae_maturation)
 }
 
-#' @noRd
+#' @title Pupae maturation rate
+#' @param temp temperature
+#' @param pars a list
 #' @export
 pupae_maturation_rate <- function(temp, pars){
   

@@ -109,6 +109,9 @@ time that individuals entering the stage at that time step need to wait before l
 (forward-looking), so we subtract the delay from the time to get the entry times,
 and pair those with the delay associated with entry into the stage at that time.
 
+We use it to get 3 vectors, each one gives the number of time steps individuals
+entering that stage on that step need to wait before maturation.
+
 ```{r}
 # delays at t=0
 tau0 <- c("E"=0,"L"=0,"P"=0)
@@ -139,6 +142,9 @@ tauL <- as.integer(tau_traj[step_forward_L %in% 1:maxstep, "L"][[1]])
 tauP <- as.integer(tau_traj[step_forward_P %in% 1:maxstep, "P"][[1]])
 ```
 
+Let's get a trajectory from the deterministic model with these initial conditions
+and parameters.
+
 ```{r}
 # solve a determiinistic trajectory
 mod <- create_culex_deterministic(p = 2, tau_E = tauE, tau_L = tauL, tau_P = tauP, dt = dt, psi = psi)
@@ -161,7 +167,9 @@ for (i in 1:maxstep) {
 }
 ```
 
-# draw samples from stochastic model
+We will draw 10 samples from the stochastic model.
+
+```{r}
 out <- parallel::mclapply(X = 1:10, FUN = function(runid) {
   mod <- create_culex_stochastic(p = 2, tau_E = tauE, tau_L = tauL, tau_P = tauP, dt = dt, psi = psi)
   set_A_stochastic(mod = mod, A = A0)
@@ -185,8 +193,11 @@ out <- parallel::mclapply(X = 1:10, FUN = function(runid) {
   out[ , "run" := as.integer(runid)]
   return(out)
 })
+```
 
+Plot the simulations.
 
+```{r}
 out_sum <- do.call(rbind, out)
 
 ggplot(data = out_sum) +
@@ -199,5 +210,4 @@ ggplot(data = out_sum[stage == "A", ]) +
   geom_line(aes(x=day, y =value, group = interaction(run, patch), color = stage, linetype = patch), alpha = 0.35) +
   geom_line(data = out_d[stage == "A", ], aes(x=day, y =value, color = stage, linetype = patch)) +
   theme_bw()
-
 ```

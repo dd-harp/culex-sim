@@ -177,6 +177,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// tau_diffeqn
+Rcpp::List tau_diffeqn(const double t, const Rcpp::NumericVector& y, const Rcpp::List& params);
+RcppExport SEXP _culex_tau_diffeqn(SEXP tSEXP, SEXP ySEXP, SEXP paramsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const double >::type t(tSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
+    rcpp_result_gen = Rcpp::wrap(tau_diffeqn(t, y, params));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_culex_create_culex_stochastic", (DL_FUNC) &_culex_create_culex_stochastic, 6},
@@ -193,6 +206,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_culex_get_E_deterministic", (DL_FUNC) &_culex_get_E_deterministic, 1},
     {"_culex_get_L_deterministic", (DL_FUNC) &_culex_get_L_deterministic, 1},
     {"_culex_get_P_deterministic", (DL_FUNC) &_culex_get_P_deterministic, 1},
+    {"_culex_tau_diffeqn", (DL_FUNC) &_culex_tau_diffeqn, 3},
     {NULL, NULL, 0}
 };
 

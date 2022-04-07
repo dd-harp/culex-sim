@@ -113,3 +113,13 @@ get_P_deterministic <- function(mod) {
     .Call('_culex_get_P_deterministic', PACKAGE = 'culex', mod)
 }
 
+#' @title Differential equations describing change in delays
+#' @description This function is meant to be passed to [deSolve::ode].
+#' @param t time
+#' @param y state
+#' @param params a list of parameters
+#' @export
+tau_diffeqn <- function(t, y, params) {
+    .Call('_culex_tau_diffeqn', PACKAGE = 'culex', t, y, params)
+}
+

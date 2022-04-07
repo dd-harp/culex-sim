@@ -178,4 +178,67 @@ inline double oviposition(const double d, const double G, const Rcpp::List& pars
   return ovi;
 }
 
+inline double egg_maturation_rate(const double temp, const Rcpp::List& pars) {
+  
+  double alpha_E = pars["alpha_E"]; // ALPHA
+  double beta_E = pars["beta_E"]; // BETA
+  double maturation_min = pars["maturation_min"];
+  
+  // calculate egg development rate
+  double egg_maturation;
+  if (temp < 0.0) {
+    egg_maturation = 0.016667;
+  } else {
+    egg_maturation = alpha_E * pow(temp, beta_E);
+  }
+  
+  if (egg_maturation < maturation_min) {
+    egg_maturation = maturation_min;
+  }
+  
+  return egg_maturation;
+}
+
+inline double larvae_maturation_rate(const double temp, const Rcpp::List& pars) {
+  
+  double alpha_L = pars["alpha_L"]; // ALPHA
+  double beta_L = pars["beta_L"]; // BETA
+  double maturation_min = pars["maturation_min"];
+  
+  // calculate larvae development rate
+  double larvae_maturation;
+  if (temp < 0.0) {
+    larvae_maturation = 0.016667;
+  } else {
+    larvae_maturation = alpha_L * pow(temp, beta_L);
+  }
+  
+  if (larvae_maturation < maturation_min) {
+    larvae_maturation = maturation_min;
+  }
+  
+  return larvae_maturation;
+}
+
+inline double pupae_maturation_rate(const double temp, const Rcpp::List& pars) {
+  
+  double alpha_P = pars["alpha_P"]; // ALPHA
+  double beta_P = pars["beta_P"]; // BETA
+  double maturation_min = pars["maturation_min"];
+  
+  // calculate larvae development rate
+  double pupae_maturation;
+  if (temp < 0.0) {
+    pupae_maturation = 0.016667;
+  } else {
+    pupae_maturation = alpha_P * pow(temp, beta_P);
+  }
+  
+  if (pupae_maturation < maturation_min) {
+    pupae_maturation = maturation_min;
+  }
+  
+  return pupae_maturation;
+}
+
 #endif
