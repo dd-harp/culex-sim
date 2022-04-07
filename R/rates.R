@@ -2,8 +2,10 @@
 #   external forcing
 # --------------------------------------------------------------------------------
 
-# temperature as modified cosine function
-#' @noRd
+#' @title Temperature
+#' @description A modified cosine function.
+#' @param t time
+#' @param pars a [list]
 #' @export
 temperature <- function(t, pars){
   

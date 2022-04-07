@@ -88,7 +88,7 @@ Initial conditions and simulation time.
 
 ```{r}
 dt <- 0.1
-tmax <- 365*5
+tmax <- 365*3
 maxstep <- tmax/dt
 
 # initial # of adults
