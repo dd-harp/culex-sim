@@ -7,6 +7,17 @@ Author: Who wrote it
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
-Imports: Rcpp (>= 1.0.8)
-LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 7.1.2
+Roxygen: list(markdown = TRUE)
+SystemRequirements: C++14
+NeedsCompilation: yes
+Imports: Rcpp (>= 1.0.8), RcppArmadillo
+LinkingTo: Rcpp, RcppArmadillo
+Suggests: 
+    rmarkdown,
+    knitr,
+    deSolve,
+    data.table,
+    ggplot2,
+    parallel
+VignetteBuilder: knitr
