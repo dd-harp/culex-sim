@@ -304,6 +304,7 @@ inline void culex_inf<double>::update(const Rcpp::List& parameters) {
   int tau_E = this->tau_E[this->step];
   int tau_L = this->tau_L[this->step];
   int tau_P = this->tau_P[this->step];
+  int tau_EIP = this->tau_EIP[this->step];
   
   double p0 = parameters["p0"];
   double p1 = parameters["p1"];
@@ -351,9 +352,6 @@ inline void culex_inf<double>::update(const Rcpp::List& parameters) {
   
   arma::Row<double> lambda_I = (this->A_I * pvt) * oviposition(dia, gon, parameters) * this->dt;
   
-  // infections
-  arma::Row<double> S2E = 
-  
   // survival
   double surv = R::pexp(death_egg * dt, 1.0, 0, 0);
   this->E *= surv;
@@ -382,10 +380,16 @@ inline void culex_inf<double>::update(const Rcpp::List& parameters) {
   this->A_E *= surv;
   this->A_I *= surv;
   
+  // infections
+  arma::Row<double> h = this->f % arma::sum(this->q % this->kappa, 0);
+  arma::Row<double> S2E = this->A_S % h;
+  this->A_S -= S2E;
+  
   // dispersal
   this->A_S = this->A_S * this->psi;
   this->A_E = this->A_E * this->psi;
-  this->A_I = this->A_I* this->psi;
+  this->A_I = this->A_I * this->psi;
+  S2E *= this->psi;
   
   // advancement
   
@@ -429,7 +433,7 @@ inline void culex_inf<double>::update(const Rcpp::List& parameters) {
   arma::Row<double> E2I = this->A_E.row(0);
   this->A_E.row(0).zeros();
   this->A_E = this->shiftEIP * this->A_E;
-  this->A_E.row(tau_EIP-1) = ;
+  this->A_E.row(tau_EIP-1) = S2E;
   
   this->A_I += E2I;
   
