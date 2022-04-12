@@ -202,7 +202,7 @@ inline void culex<int>::update(const Rcpp::List& parameters) {
     R::rmultinom(this->A(i), this->psi.colptr(i), this->p, tmp.memptr());
     A_move += tmp;
   }
-  A = A_move;
+  this->A = A_move;
   
   // advancement
   arma::Row<int> E2L = this->E.row(0);

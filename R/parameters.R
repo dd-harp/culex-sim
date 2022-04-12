@@ -38,6 +38,7 @@
 #' @param eip_tmax EIP parameter
 #' @param eip_tmin EIP parameter
 #' @param eip_min minimum rate of EIP progression
+#' @param pvt probability of vertical transmission (per egg)
 #' @export
 culex_parameters <- function(
   phi = 1.4,
@@ -77,7 +78,8 @@ culex_parameters <- function(
   eip_q = 7.83e-5,
   eip_tmax = 45.2,
   eip_tmin = 11.4,
-  eip_min = 0.005
+  eip_min = 0.005,
+  pvt = 0.004
 ) {
   pars <- list(
     phi = phi,
@@ -117,7 +119,8 @@ culex_parameters <- function(
     eip_q = eip_q,
     eip_tmax = eip_tmax,
     eip_tmin = eip_tmin,
-    eip_min = eip_min
+    eip_min = eip_min,
+    pvt = pvt
   )
   pars[["p0"]] <- pars[["r"]] / pars[["h"]]
   pars[["p1"]] <- pars[["V"]] / (pars[["a"]] * pars[["h"]])
