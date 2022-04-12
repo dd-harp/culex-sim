@@ -42,7 +42,8 @@ culex_parameters(
   eip_q = 7.83e-05,
   eip_tmax = 45.2,
   eip_tmin = 11.4,
-  eip_min = 0.005
+  eip_min = 0.005,
+  pvt = 0.004
 )
 }
 \arguments{
@@ -121,6 +122,8 @@ culex_parameters(
 \item{eip_tmin}{EIP parameter}
 
 \item{eip_min}{minimum rate of EIP progression}
+
+\item{pvt}{probability of vertical transmission (per egg)}
 }
 \description{
 Most of these parameters can be found at \link[=https://github.com/davewi13/Temperate-Mosquito-DDE/blob/master/Chapter 2 DDE code.f90]{https://github.com/davewi13/Temperate-Mosquito-DDE/blob/master/Chapter\%202\%20DDE\%20code.f90}.

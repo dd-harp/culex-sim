@@ -113,6 +113,18 @@ get_P_deterministic <- function(mod) {
     .Call('_culex_get_P_deterministic', PACKAGE = 'culex', mod)
 }
 
+#' @title Create stochastic culex model object
+#' @param p number of patches
+#' @param tau_E vector of egg delays
+#' @param tau_L vector of larvae delays
+#' @param tau_P vector of pupae delays
+#' @param dt size of time step
+#' @param psi adult movement matrix
+#' @export
+create_culex_infection_stochastic <- function(p, tau_E, tau_L, tau_P, tau_EIP, dt, psi, n_species) {
+    .Call('_culex_create_culex_infection_stochastic', PACKAGE = 'culex', p, tau_E, tau_L, tau_P, tau_EIP, dt, psi, n_species)
+}
+
 #' @title Differential equations describing change in delays
 #' @description This function is meant to be passed to [deSolve::ode].
 #' @param t time

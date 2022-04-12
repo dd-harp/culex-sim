@@ -85,42 +85,17 @@ struct culex_inf {
   std::vector<int> tau_EIP;
   
   // ctor/dtor
-  culex_inf(const int p_, const std::vector<int>& tau_E_, const std::vector<int>& tau_L_, const std::vector<int>& tau_P_, const std::vector<int>& tau_EIP_, const double dt_, const arma::Mat<double>& psi_, const double n_species);
+  culex_inf(const int p_, const std::vector<int>& tau_E_, const std::vector<int>& tau_L_, const std::vector<int>& tau_P_, const std::vector<int>& tau_EIP_, const double dt_, const arma::Mat<double>& psi_, const int n_species);
   ~culex_inf() = default;
   
   // methods
   void update(const Rcpp::List& parameters);
   
-  void set_f(const arma::Row<double>& f_) {f = f_;};
-  void set_q(const arma::Mat<double> q_) {q = q_;};
-  void set_kappa(const arma::Mat<double> kappa_) {kappa = kappa_;};
-  
-  void set_E(const arma::Mat<T>& E_) {E = E_;};
-  void set_L(const arma::Mat<T>& L_) {L = L_;};
-  void set_P(const arma::Mat<T>& P_) {P = P_;};
-  void get_E() {return E;};
-  void get_L() {return L;};
-  void get_P() {return P;};
-  
-  void set_E_I(const arma::Mat<T>& E_I_) {E_I = E_I_;};
-  void set_L_I(const arma::Mat<T>& L_I_) {L_I = L_I_;};
-  void set_P_I(const arma::Mat<T>& P_I_) {P_I = P_I_;};
-  void get_E_I() {return E_I;};
-  void get_L_I() {return L_I;};
-  void get_P_I() {return P_I;};
-  
-  void set_A_S(const arma::Row<T>& A_S_) {A_S = A_S_;};
-  void set_A_E(const arma::Mat<T>& A_E_) {A_E = A_E_;};
-  void set_A_I(const arma::Row<T>& A_I_) {A_I = A_I_;};
-  void get_A_S() {return A_S;};
-  void get_A_E() {return A_E;};
-  void get_A_I() {return A_I;};
-  
 };
 
 // constructor
 template <typename T>
-inline culex_inf<T>::culex_inf(const int p_, const std::vector<int>& tau_E_, const std::vector<int>& tau_L_, const std::vector<int>& tau_P_, const std::vector<int>& tau_EIP_, const double dt_, const arma::Mat<double>& psi_, const double n_species) :
+inline culex_inf<T>::culex_inf(const int p_, const std::vector<int>& tau_E_, const std::vector<int>& tau_L_, const std::vector<int>& tau_P_, const std::vector<int>& tau_EIP_, const double dt_, const arma::Mat<double>& psi_, const int n_species) :
   psi(psi_), step(0), p(p_), dt(dt_), 
   f(n_species, arma::fill::zeros), q(n_species, p_, arma::fill::zeros), kappa(n_species, p_, arma::fill::zeros),
   tau_E(tau_E_), tau_L(tau_L_), tau_P(tau_P_), tau_EIP(tau_EIP_)

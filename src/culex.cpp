@@ -13,7 +13,7 @@
 // [[Rcpp::export]]
 Rcpp::XPtr<culex_stochastic> create_culex_stochastic(const int p, const std::vector<int>& tau_E, const std::vector<int>& tau_L, const std::vector<int>& tau_P, const double dt, const arma::Mat<double>& psi) {
   return Rcpp::XPtr<culex_stochastic>(
-    new culex<int>(p, tau_E, tau_L, tau_P, dt, psi),
+    new culex_stochastic(p, tau_E, tau_L, tau_P, dt, psi),
     true
   );
 };
@@ -82,7 +82,7 @@ arma::Row<int> get_P_stochastic(Rcpp::XPtr<culex_stochastic> mod) {
 // [[Rcpp::export]]
 Rcpp::XPtr<culex_deterministic> create_culex_deterministic(const int p, const std::vector<int>& tau_E, const std::vector<int>& tau_L, const std::vector<int>& tau_P, const double dt, const arma::Mat<double>& psi) {
   return Rcpp::XPtr<culex_deterministic>(
-    new culex<double>(p, tau_E, tau_L, tau_P, dt, psi),
+    new culex_deterministic(p, tau_E, tau_L, tau_P, dt, psi),
     true
   );
 };
