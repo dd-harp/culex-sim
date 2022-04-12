@@ -13,18 +13,20 @@
 //' @param params a list of parameters
 //' @export
 // [[Rcpp::export]]
-Rcpp::List tau_diffeqn(const double t, const Rcpp::NumericVector& y, const Rcpp::List& params){
+Rcpp::List tau_diffeqn(const double t, const Rcpp::NumericVector& y, const Rcpp::List& params) {
   
   // state variables
   double DE = y[0]; // tau_E(t)
   double DL = y[1]; // tau_L(t)
   double DP = y[2]; // tau_P(t)
+  double DEIP = y[3]; // tau_EIP(t)
   
   // temperature
   double temp = temperature(t, params);
   double temp_E = temperature(t - DE, params);
   double temp_L = temperature(t - DL, params);
   double temp_P = temperature(t - DP, params);
+  double temp_EIP = temperature(t - DEIP, params);
 
   // development
   double larvae_maturation = larvae_maturation_rate(temp, params);
@@ -35,17 +37,22 @@ Rcpp::List tau_diffeqn(const double t, const Rcpp::NumericVector& y, const Rcpp:
 
   double pupae_maturation = pupae_maturation_rate(temp, params);
   double pupae_maturation_P = pupae_maturation_rate(temp_P, params);
+  
+  double incubation = eip_rate(temp, params);
+  double incubation_EIP = eip_rate(temp_EIP, params);
 
   // ODEs describing change in state duration
   double dDEdt = 1.0 - egg_maturation/egg_maturation_E;
   double dDLdt = 1.0 - larvae_maturation/larvae_maturation_L;
   double dDPdt = 1.0 - pupae_maturation/pupae_maturation_P;
+  double dDEIPdt = 1.0 - incubation/incubation_EIP;
 
   // ODE system
-  Rcpp::NumericVector du(3);
+  Rcpp::NumericVector du(4);
   du[0] = dDEdt;
   du[1] = dDLdt;
   du[2] = dDPdt;
+  du[3] = dDEIPdt;
   
   return Rcpp::List::create(du);
 }

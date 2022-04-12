@@ -241,4 +241,27 @@ inline double pupae_maturation_rate(const double temp, const Rcpp::List& pars) {
   return pupae_maturation;
 }
 
+
+// --------------------------------------------------------------------------------
+//   extrinsic incubation period
+// --------------------------------------------------------------------------------
+
+inline double eip_rate(const double temp, const Rcpp::List& pars) {
+  
+  double q = pars["eip_q"];
+  double Tmax = pars["eip_tmax"];
+  double Tmin = pars["eip_tmin"];
+  double eip_min = pars["eip_min"];
+  
+  if (temp > Tmax) {
+    return eip_min;
+  } else if (temp < Tmin) {
+    return eip_min;
+  } else {
+    double eip = q*temp*(temp - Tmin) * sqrt(Tmax - temp);
+    return std::max(eip, eip_min);
+  }
+  
+}
+
 #endif

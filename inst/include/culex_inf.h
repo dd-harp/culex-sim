@@ -326,16 +326,11 @@ inline void culex_inf<double>::update(const Rcpp::List& parameters) {
   double death_pupae = death_pupae_rate(temp, parameters);
   double death_adult = death_adult_rate(temp, parameters);
   
-  arma::Row<double> larvae_tot = arma::sum(this->L, 0);
+  // larval mortality depends on total larvae (both S and I)
+  arma::Row<double> larvae_tot = arma::sum(this->L, 0) + arma::sum(this->L_I, 0);
   std::vector<double> death_larvae_tot(this->p, death_larvae);
   for (auto i = 0u; i < this->p; ++i) {
     death_larvae_tot[i] += p0 * larvae_tot(i) / (p1 + larvae_tot(i));
-  }
-  
-  arma::Row<double> larvae_I_tot = arma::sum(this->L_I, 0);
-  std::vector<double> death_larvae_I_tot(this->p, death_larvae);
-  for (auto i = 0u; i < this->p; ++i) {
-    death_larvae_I_tot[i] += p0 * larvae_I_tot(i) / (p1 + larvae_I_tot(i));
   }
   
   // diapause and egg laying
@@ -365,8 +360,8 @@ inline void culex_inf<double>::update(const Rcpp::List& parameters) {
   });
   
   i = 0;
-  this->L_I.each_col([&death_larvae_I_tot, &i, dt = this->dt](arma::Col<double>& val) {
-    double surv = R::pexp(death_larvae_I_tot[i] * dt, 1.0, 0, 0);
+  this->L_I.each_col([&death_larvae_tot, &i, dt = this->dt](arma::Col<double>& val) {
+    double surv = R::pexp(death_larvae_tot[i] * dt, 1.0, 0, 0);
     val *= surv;
     i++;
   });

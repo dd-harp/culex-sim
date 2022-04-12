@@ -2,7 +2,9 @@
 
 export(create_culex_deterministic)
 export(create_culex_stochastic)
+export(culex_parameters)
 export(egg_maturation_rate)
+export(eip_rate)
 export(get_A_deterministic)
 export(get_A_stochastic)
 export(get_E_deterministic)

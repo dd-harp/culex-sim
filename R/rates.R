@@ -98,3 +98,31 @@ pupae_maturation_rate <- function(temp, pars){
   }
   return(pupae_maturation)
 }
+
+
+# --------------------------------------------------------------------------------
+#   extrinsic incubation period
+# --------------------------------------------------------------------------------
+  
+#' @title Extrinsic incubation development rate
+#' @param temp temperature
+#' @param pars a list
+#' @export
+eip_rate <- function(temp, pars) {
+    
+  q = pars[["eip_q"]]
+  Tmax = pars[["eip_tmax"]]
+  Tmin = pars[["eip_tmin"]]
+  eip_min = pars[["eip_min"]]
+    
+  if (temp > Tmax) {
+    return(eip_min)
+  } else if (temp < Tmin) {
+    return(eip_min)
+  } else {
+    eip = q*temp*(temp - Tmin) * sqrt(Tmax - temp)
+    return(max(eip, eip_min))
+  }
+    
+}
+
