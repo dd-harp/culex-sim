@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{create_culex_infection_stochastic}
 \alias{create_culex_infection_stochastic}
-\title{Create stochastic culex model object}
+\title{Create stochastic culex infection model object}
 \usage{
 create_culex_infection_stochastic(
   p,
@@ -24,10 +24,14 @@ create_culex_infection_stochastic(
 
 \item{tau_P}{vector of pupae delays}
 
+\item{tau_EIP}{vector of extrinsic incubation period delays}
+
 \item{dt}{size of time step}
 
 \item{psi}{adult movement matrix}
+
+\item{n_species}{number of host species}
 }
 \description{
-Create stochastic culex model object
+Create stochastic culex infection model object
 }

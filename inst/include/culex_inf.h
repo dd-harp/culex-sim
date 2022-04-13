@@ -340,17 +340,17 @@ inline void culex_inf<int>::update(const Rcpp::List& parameters) {
   arma::Row<int> E2L = this->E.row(0);
   this->E.row(0).zeros();
   this->E = this->shiftE * this->E;
-  this->E.row(tau_E-1) = lambda;
+  this->E.row(tau_E-1) += lambda;
   
   arma::Row<int> L2P = this->L.row(0);
   this->L.row(0).zeros();
   this->L = this->shiftL * this->L;
-  this->L.row(tau_L-1) = E2L;
+  this->L.row(tau_L-1) += E2L;
   
   arma::Row<int> P2A = this->P.row(0);
   this->P.row(0).zeros();
   this->P = this->shiftP * this->P;
-  this->P.row(tau_P-1) = L2P;;
+  this->P.row(tau_P-1) += L2P;;
   
   this->A_S += P2A;
   
@@ -358,17 +358,17 @@ inline void culex_inf<int>::update(const Rcpp::List& parameters) {
   E2L = this->E_I.row(0);
   this->E_I.row(0).zeros();
   this->E_I = this->shiftE * this->E_I;
-  this->E_I.row(tau_E-1) = lambda_I;
+  this->E_I.row(tau_E-1) += lambda_I;
   
   L2P = this->L_I.row(0);
   this->L_I.row(0).zeros();
   this->L_I = this->shiftL * this->L_I;
-  this->L_I.row(tau_L-1) = E2L;
+  this->L_I.row(tau_L-1) += E2L;
   
   P2A = this->P_I.row(0);
   this->P_I.row(0).zeros();
   this->P_I = this->shiftP * this->P_I;
-  this->P_I.row(tau_P-1) = L2P;
+  this->P_I.row(tau_P-1) += L2P;
   
   this->A_I += P2A;
   
@@ -376,8 +376,8 @@ inline void culex_inf<int>::update(const Rcpp::List& parameters) {
   arma::Row<int> E2I = this->A_E.row(0);
   this->A_E.row(0).zeros();
   this->A_E = this->shiftEIP * this->A_E;
-  this->A_E.row(tau_EIP-1) = S2E;
-  
+  this->A_E.row(tau_EIP-1) += S2E;
+
   this->A_I += E2I;
   
   // advance time step
@@ -485,17 +485,17 @@ inline void culex_inf<double>::update(const Rcpp::List& parameters) {
   arma::Row<double> E2L = this->E.row(0);
   this->E.row(0).zeros();
   this->E = this->shiftE * this->E;
-  this->E.row(tau_E-1) = lambda;
+  this->E.row(tau_E-1) += lambda;
   
   arma::Row<double> L2P = this->L.row(0);
   this->L.row(0).zeros();
   this->L = this->shiftL * this->L;
-  this->L.row(tau_L-1) = E2L;
+  this->L.row(tau_L-1) += E2L;
   
   arma::Row<double> P2A = this->P.row(0);
   this->P.row(0).zeros();
   this->P = this->shiftP * this->P;
-  this->P.row(tau_P-1) = L2P;;
+  this->P.row(tau_P-1) += L2P;;
   
   this->A_S += P2A;
   
@@ -503,17 +503,17 @@ inline void culex_inf<double>::update(const Rcpp::List& parameters) {
   E2L = this->E_I.row(0);
   this->E_I.row(0).zeros();
   this->E_I = this->shiftE * this->E_I;
-  this->E_I.row(tau_E-1) = lambda_I;
+  this->E_I.row(tau_E-1) += lambda_I;
   
   L2P = this->L_I.row(0);
   this->L_I.row(0).zeros();
   this->L_I = this->shiftL * this->L_I;
-  this->L_I.row(tau_L-1) = E2L;
+  this->L_I.row(tau_L-1) += E2L;
   
   P2A = this->P_I.row(0);
   this->P_I.row(0).zeros();
   this->P_I = this->shiftP * this->P_I;
-  this->P_I.row(tau_P-1) = L2P;
+  this->P_I.row(tau_P-1) += L2P;
   
   this->A_I += P2A;
   
@@ -521,7 +521,7 @@ inline void culex_inf<double>::update(const Rcpp::List& parameters) {
   arma::Row<double> E2I = this->A_E.row(0);
   this->A_E.row(0).zeros();
   this->A_E = this->shiftEIP * this->A_E;
-  this->A_E.row(tau_EIP-1) = S2E;
+  this->A_E.row(tau_EIP-1) += S2E;
   
   this->A_I += E2I;
   

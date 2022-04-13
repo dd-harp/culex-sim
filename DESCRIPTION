@@ -12,13 +12,20 @@ Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 SystemRequirements: C++14
 NeedsCompilation: yes
-Imports: Rcpp (>= 1.0.8), RcppArmadillo
-LinkingTo: Rcpp, RcppArmadillo
+Imports: 
+    Rcpp (>= 1.0.8), 
+    RcppArmadillo,
+    PBSddesolve
+LinkingTo: 
+    Rcpp, 
+    RcppArmadillo
 Suggests: 
     rmarkdown,
     knitr,
     deSolve,
     data.table,
     ggplot2,
-    parallel
+    parallel,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
+Config/testthat/edition: 3

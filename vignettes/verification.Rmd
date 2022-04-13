@@ -1,0 +1,120 @@
+---
+title: "verification"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{verification}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(culex)
+library(PBSddesolve)
+library(deSolve)
+library(parallel)
+library(data.table)
+library(ggplot2)
+```
+We'll compare our discretized models to the DDE models developed in ["Uncovering mechanisms behind mosquito seasonality by integrating mathematical models and daily empirical population data"](https://parasitesandvectors.biomedcentral.com/articles/10.1186/s13071-019-3321-2) and ["Modelling the effect of temperature on the seasonal population dynamics of temperate mosquitoes"](https://www.sciencedirect.com/science/article/pii/S0022519316300285). We'll use the `dde` function from the "PBSddesolve" package to integrate the continuous deterministic system we want to compare our discretization to.
+
+We simulate over 5 years, first we solve the DDEs. The size of the discrete time step `dt` (and `maxstep`) are not used here but we specify it so all the parameters relevant to the time window are given in the same place.
+
+```{r}
+tmax <- 365*5
+A0 <- 12000
+t0 <- 0.0
+dt <- 0.1
+maxstep <- tmax/dt
+
+parameters <- culex_parameters()
+
+temp0 <- temperature(t0,parameters)
+u0 <- calculate_IC(A0,temp0,parameters)
+
+traj <- dde(y = u0, times = 0:tmax, func = culex_dde, parms = parameters)
+
+colnames(traj)[2:14] <- c("E","L","P","A","SE","SL","SP","tau_E","tau_L","tau_P","tau_EL","tau_LP","tau_ELP")
+
+traj_dt <- as.data.table(traj[, c("time","E","L","P","A")])
+setnames(traj_dt, old = "time", new = "day")
+traj_dt <- melt(traj_dt, id.vars = "day")
+setnames(traj_dt, old = "variable", new = "stage")
+```
+
+Now we'll solve the ODEs that describe the stage durations over that time interval, which are input to the discretized models. We use `ode` from the "deSolve" package for this.
+
+```{r}
+# delays at t=0
+tau0 <- c("E"=0,"L"=0,"P"=0,"EIP"=0)
+temp0 <- temperature(0, parameters)
+tau0[1] = 1 / egg_maturation_rate(temp0, parameters) # tau_E
+tau0[2] = 1 / larvae_maturation_rate(temp0, parameters) # tau_L
+tau0[3] = 1 / pupae_maturation_rate(temp0, parameters) # tau_P
+tau0[4] = 1 / eip_rate(temp = temp0, parameters)
+
+# integrate past the simulation end time by a comfortable amount
+times <- seq(from = 0, to = tmax + 200, by = dt)
+tau_ode <- deSolve::ode(y = tau0, times = times, func = tau_diffeqn, parms = parameters, method = "ode23")
+
+tau_traj <- as.data.table(tau_ode)
+tau_traj[, "EIP" := NULL]
+tau_traj[, "step" := seq_along(times)]
+tau_traj[, c("E", "L", "P") := lapply(.SD, function(x){as.integer(round(x = x/dt))}), .SDcols = c("E", "L", "P")]
+tau_traj[, "time" := NULL]
+
+# go from backward-looking maturation delays to forward-looking delays
+tau_traj[, "step_forward_E" := as.integer(step - E)]
+tau_traj[, "step_forward_L" := as.integer(step - L)]
+tau_traj[, "step_forward_P" := as.integer(step - P)]
+
+tauE <- as.integer(tau_traj[step_forward_E %in% 1:maxstep, "E"][[1]])
+tauL <- as.integer(tau_traj[step_forward_L %in% 1:maxstep, "L"][[1]])
+tauP <- as.integer(tau_traj[step_forward_P %in% 1:maxstep, "P"][[1]])
+```
+
+Let's draw 10 stochastic trajectories.
+
+```{r}
+out <- parallel::mclapply(X = 1:10, FUN = function(runid) {
+  mod <- create_culex_stochastic(p = 1, tau_E = tauE, tau_L = tauL, tau_P = tauP, dt = dt, psi = diag(1))
+  set_A_stochastic(mod = mod, A = A0)
+  
+  out <- data.table(day = rep(1:tmax, each = 4), stage = rep(c("E","L","P","A"), tmax), value = NaN)
+  setkey(out, "day")
+  out_i <- 1L
+
+  for (i in 1:maxstep) {
+    step_culex_stochastic(mod = mod, parameters = parameters)
+    if ((i-1) %% (1/dt) == 0) {
+      out[day == out_i & stage == "E", "value" := as.vector(get_E_stochastic(mod))]
+      out[day == out_i & stage == "L", "value" := as.vector(get_L_stochastic(mod))]
+      out[day == out_i & stage == "P", "value" := as.vector(get_P_stochastic(mod))]
+      out[day == out_i & stage == "A", "value" := as.vector(get_A_stochastic(mod))]
+      out_i <- out_i + 1L
+    }
+  }
+
+  out[ , "run" := as.integer(runid)]
+  return(out)
+})
+
+out_sum <- do.call(rbind, out)
+```
+
+Plot the output.
+
+```{r}
+ggplot(data = out_sum) +
+  geom_line(aes(x = day, y = value, group = interaction(run, stage), color = stage), alpha = 0.35) +
+  geom_line(data=traj_dt, aes(x=day,y=value,color=stage), lty=2) +
+  facet_wrap(. ~ stage, scales = "free") +
+  theme_bw()
+```
+

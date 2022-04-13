@@ -195,6 +195,281 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// step_culex_infection_stochastic
+void step_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, const Rcpp::List& parameters);
+RcppExport SEXP _culex_step_culex_infection_stochastic(SEXP modSEXP, SEXP parametersSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type parameters(parametersSEXP);
+    step_culex_infection_stochastic(mod, parameters);
+    return R_NilValue;
+END_RCPP
+}
+// set_f_culex_infection_stochastic
+void set_f_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, const arma::Row<double>& f);
+RcppExport SEXP _culex_set_f_culex_infection_stochastic(SEXP modSEXP, SEXP fSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    Rcpp::traits::input_parameter< const arma::Row<double>& >::type f(fSEXP);
+    set_f_culex_infection_stochastic(mod, f);
+    return R_NilValue;
+END_RCPP
+}
+// get_f_culex_infection_stochastic
+arma::Row<double> get_f_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod);
+RcppExport SEXP _culex_get_f_culex_infection_stochastic(SEXP modSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_f_culex_infection_stochastic(mod));
+    return rcpp_result_gen;
+END_RCPP
+}
+// set_q_culex_infection_stochastic
+void set_q_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, const arma::Mat<double>& q);
+RcppExport SEXP _culex_set_q_culex_infection_stochastic(SEXP modSEXP, SEXP qSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    Rcpp::traits::input_parameter< const arma::Mat<double>& >::type q(qSEXP);
+    set_q_culex_infection_stochastic(mod, q);
+    return R_NilValue;
+END_RCPP
+}
+// get_q_culex_infection_stochastic
+arma::Mat<double> get_q_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod);
+RcppExport SEXP _culex_get_q_culex_infection_stochastic(SEXP modSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_q_culex_infection_stochastic(mod));
+    return rcpp_result_gen;
+END_RCPP
+}
+// set_kappa_culex_infection_stochastic
+void set_kappa_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, const arma::Mat<double>& kappa);
+RcppExport SEXP _culex_set_kappa_culex_infection_stochastic(SEXP modSEXP, SEXP kappaSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    Rcpp::traits::input_parameter< const arma::Mat<double>& >::type kappa(kappaSEXP);
+    set_kappa_culex_infection_stochastic(mod, kappa);
+    return R_NilValue;
+END_RCPP
+}
+// get_kappa_culex_infection_stochastic
+arma::Mat<double> get_kappa_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod);
+RcppExport SEXP _culex_get_kappa_culex_infection_stochastic(SEXP modSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_kappa_culex_infection_stochastic(mod));
+    return rcpp_result_gen;
+END_RCPP
+}
+// set_AS_culex_infection_stochastic
+void set_AS_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, arma::Row<int>& A);
+RcppExport SEXP _culex_set_AS_culex_infection_stochastic(SEXP modSEXP, SEXP ASEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    Rcpp::traits::input_parameter< arma::Row<int>& >::type A(ASEXP);
+    set_AS_culex_infection_stochastic(mod, A);
+    return R_NilValue;
+END_RCPP
+}
+// get_AS_culex_infection_stochastic
+arma::Row<int> get_AS_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod);
+RcppExport SEXP _culex_get_AS_culex_infection_stochastic(SEXP modSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_AS_culex_infection_stochastic(mod));
+    return rcpp_result_gen;
+END_RCPP
+}
+// set_AE_culex_infection_stochastic
+void set_AE_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, arma::Mat<int>& A);
+RcppExport SEXP _culex_set_AE_culex_infection_stochastic(SEXP modSEXP, SEXP ASEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int>& >::type A(ASEXP);
+    set_AE_culex_infection_stochastic(mod, A);
+    return R_NilValue;
+END_RCPP
+}
+// get_AE_culex_infection_stochastic
+arma::Mat<int> get_AE_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod);
+RcppExport SEXP _culex_get_AE_culex_infection_stochastic(SEXP modSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_AE_culex_infection_stochastic(mod));
+    return rcpp_result_gen;
+END_RCPP
+}
+// set_AI_culex_infection_stochastic
+void set_AI_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, arma::Row<int>& A);
+RcppExport SEXP _culex_set_AI_culex_infection_stochastic(SEXP modSEXP, SEXP ASEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    Rcpp::traits::input_parameter< arma::Row<int>& >::type A(ASEXP);
+    set_AI_culex_infection_stochastic(mod, A);
+    return R_NilValue;
+END_RCPP
+}
+// get_AI_culex_infection_stochastic
+arma::Row<int> get_AI_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod);
+RcppExport SEXP _culex_get_AI_culex_infection_stochastic(SEXP modSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_AI_culex_infection_stochastic(mod));
+    return rcpp_result_gen;
+END_RCPP
+}
+// set_E_culex_infection_stochastic
+void set_E_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, arma::Mat<int>& E);
+RcppExport SEXP _culex_set_E_culex_infection_stochastic(SEXP modSEXP, SEXP ESEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int>& >::type E(ESEXP);
+    set_E_culex_infection_stochastic(mod, E);
+    return R_NilValue;
+END_RCPP
+}
+// get_E_culex_infection_stochastic
+arma::Mat<int> get_E_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod);
+RcppExport SEXP _culex_get_E_culex_infection_stochastic(SEXP modSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_E_culex_infection_stochastic(mod));
+    return rcpp_result_gen;
+END_RCPP
+}
+// set_EI_culex_infection_stochastic
+void set_EI_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, arma::Mat<int>& E);
+RcppExport SEXP _culex_set_EI_culex_infection_stochastic(SEXP modSEXP, SEXP ESEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int>& >::type E(ESEXP);
+    set_EI_culex_infection_stochastic(mod, E);
+    return R_NilValue;
+END_RCPP
+}
+// get_EI_culex_infection_stochastic
+arma::Mat<int> get_EI_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod);
+RcppExport SEXP _culex_get_EI_culex_infection_stochastic(SEXP modSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_EI_culex_infection_stochastic(mod));
+    return rcpp_result_gen;
+END_RCPP
+}
+// set_L_culex_infection_stochastic
+void set_L_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, arma::Mat<int>& L);
+RcppExport SEXP _culex_set_L_culex_infection_stochastic(SEXP modSEXP, SEXP LSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int>& >::type L(LSEXP);
+    set_L_culex_infection_stochastic(mod, L);
+    return R_NilValue;
+END_RCPP
+}
+// get_L_culex_infection_stochastic
+arma::Mat<int> get_L_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod);
+RcppExport SEXP _culex_get_L_culex_infection_stochastic(SEXP modSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_L_culex_infection_stochastic(mod));
+    return rcpp_result_gen;
+END_RCPP
+}
+// set_LI_culex_infection_stochastic
+void set_LI_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, arma::Mat<int>& L);
+RcppExport SEXP _culex_set_LI_culex_infection_stochastic(SEXP modSEXP, SEXP LSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int>& >::type L(LSEXP);
+    set_LI_culex_infection_stochastic(mod, L);
+    return R_NilValue;
+END_RCPP
+}
+// get_LI_culex_infection_stochastic
+arma::Mat<int> get_LI_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod);
+RcppExport SEXP _culex_get_LI_culex_infection_stochastic(SEXP modSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_LI_culex_infection_stochastic(mod));
+    return rcpp_result_gen;
+END_RCPP
+}
+// set_P_culex_infection_stochastic
+void set_P_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, arma::Mat<int>& P);
+RcppExport SEXP _culex_set_P_culex_infection_stochastic(SEXP modSEXP, SEXP PSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int>& >::type P(PSEXP);
+    set_P_culex_infection_stochastic(mod, P);
+    return R_NilValue;
+END_RCPP
+}
+// get_P_culex_infection_stochastic
+arma::Mat<int> get_P_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod);
+RcppExport SEXP _culex_get_P_culex_infection_stochastic(SEXP modSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_P_culex_infection_stochastic(mod));
+    return rcpp_result_gen;
+END_RCPP
+}
+// set_PI_culex_infection_stochastic
+void set_PI_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, arma::Mat<int>& P);
+RcppExport SEXP _culex_set_PI_culex_infection_stochastic(SEXP modSEXP, SEXP PSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int>& >::type P(PSEXP);
+    set_PI_culex_infection_stochastic(mod, P);
+    return R_NilValue;
+END_RCPP
+}
+// get_PI_culex_infection_stochastic
+arma::Mat<int> get_PI_culex_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod);
+RcppExport SEXP _culex_get_PI_culex_infection_stochastic(SEXP modSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<culex_infection_stochastic> >::type mod(modSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_PI_culex_infection_stochastic(mod));
+    return rcpp_result_gen;
+END_RCPP
+}
 // tau_diffeqn
 Rcpp::List tau_diffeqn(const double t, const Rcpp::NumericVector& y, const Rcpp::List& params);
 RcppExport SEXP _culex_tau_diffeqn(SEXP tSEXP, SEXP ySEXP, SEXP paramsSEXP) {
@@ -225,6 +500,31 @@ static const R_CallMethodDef CallEntries[] = {
     {"_culex_get_L_deterministic", (DL_FUNC) &_culex_get_L_deterministic, 1},
     {"_culex_get_P_deterministic", (DL_FUNC) &_culex_get_P_deterministic, 1},
     {"_culex_create_culex_infection_stochastic", (DL_FUNC) &_culex_create_culex_infection_stochastic, 8},
+    {"_culex_step_culex_infection_stochastic", (DL_FUNC) &_culex_step_culex_infection_stochastic, 2},
+    {"_culex_set_f_culex_infection_stochastic", (DL_FUNC) &_culex_set_f_culex_infection_stochastic, 2},
+    {"_culex_get_f_culex_infection_stochastic", (DL_FUNC) &_culex_get_f_culex_infection_stochastic, 1},
+    {"_culex_set_q_culex_infection_stochastic", (DL_FUNC) &_culex_set_q_culex_infection_stochastic, 2},
+    {"_culex_get_q_culex_infection_stochastic", (DL_FUNC) &_culex_get_q_culex_infection_stochastic, 1},
+    {"_culex_set_kappa_culex_infection_stochastic", (DL_FUNC) &_culex_set_kappa_culex_infection_stochastic, 2},
+    {"_culex_get_kappa_culex_infection_stochastic", (DL_FUNC) &_culex_get_kappa_culex_infection_stochastic, 1},
+    {"_culex_set_AS_culex_infection_stochastic", (DL_FUNC) &_culex_set_AS_culex_infection_stochastic, 2},
+    {"_culex_get_AS_culex_infection_stochastic", (DL_FUNC) &_culex_get_AS_culex_infection_stochastic, 1},
+    {"_culex_set_AE_culex_infection_stochastic", (DL_FUNC) &_culex_set_AE_culex_infection_stochastic, 2},
+    {"_culex_get_AE_culex_infection_stochastic", (DL_FUNC) &_culex_get_AE_culex_infection_stochastic, 1},
+    {"_culex_set_AI_culex_infection_stochastic", (DL_FUNC) &_culex_set_AI_culex_infection_stochastic, 2},
+    {"_culex_get_AI_culex_infection_stochastic", (DL_FUNC) &_culex_get_AI_culex_infection_stochastic, 1},
+    {"_culex_set_E_culex_infection_stochastic", (DL_FUNC) &_culex_set_E_culex_infection_stochastic, 2},
+    {"_culex_get_E_culex_infection_stochastic", (DL_FUNC) &_culex_get_E_culex_infection_stochastic, 1},
+    {"_culex_set_EI_culex_infection_stochastic", (DL_FUNC) &_culex_set_EI_culex_infection_stochastic, 2},
+    {"_culex_get_EI_culex_infection_stochastic", (DL_FUNC) &_culex_get_EI_culex_infection_stochastic, 1},
+    {"_culex_set_L_culex_infection_stochastic", (DL_FUNC) &_culex_set_L_culex_infection_stochastic, 2},
+    {"_culex_get_L_culex_infection_stochastic", (DL_FUNC) &_culex_get_L_culex_infection_stochastic, 1},
+    {"_culex_set_LI_culex_infection_stochastic", (DL_FUNC) &_culex_set_LI_culex_infection_stochastic, 2},
+    {"_culex_get_LI_culex_infection_stochastic", (DL_FUNC) &_culex_get_LI_culex_infection_stochastic, 1},
+    {"_culex_set_P_culex_infection_stochastic", (DL_FUNC) &_culex_set_P_culex_infection_stochastic, 2},
+    {"_culex_get_P_culex_infection_stochastic", (DL_FUNC) &_culex_get_P_culex_infection_stochastic, 1},
+    {"_culex_set_PI_culex_infection_stochastic", (DL_FUNC) &_culex_set_PI_culex_infection_stochastic, 2},
+    {"_culex_get_PI_culex_infection_stochastic", (DL_FUNC) &_culex_get_PI_culex_infection_stochastic, 1},
     {"_culex_tau_diffeqn", (DL_FUNC) &_culex_tau_diffeqn, 3},
     {NULL, NULL, 0}
 };

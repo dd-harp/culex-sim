@@ -113,16 +113,206 @@ get_P_deterministic <- function(mod) {
     .Call('_culex_get_P_deterministic', PACKAGE = 'culex', mod)
 }
 
-#' @title Create stochastic culex model object
+#' @title Create stochastic culex infection model object
 #' @param p number of patches
 #' @param tau_E vector of egg delays
 #' @param tau_L vector of larvae delays
 #' @param tau_P vector of pupae delays
+#' @param tau_EIP vector of extrinsic incubation period delays
 #' @param dt size of time step
 #' @param psi adult movement matrix
+#' @param n_species number of host species
 #' @export
 create_culex_infection_stochastic <- function(p, tau_E, tau_L, tau_P, tau_EIP, dt, psi, n_species) {
     .Call('_culex_create_culex_infection_stochastic', PACKAGE = 'culex', p, tau_E, tau_L, tau_P, tau_EIP, dt, psi, n_species)
+}
+
+#' @title Step stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @param parameters a [list] of parameters
+#' @export
+step_culex_infection_stochastic <- function(mod, parameters) {
+    invisible(.Call('_culex_step_culex_infection_stochastic', PACKAGE = 'culex', mod, parameters))
+}
+
+#' @title Set feeding rate for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @param f a row vector (feeding rate by patch)
+#' @export
+set_f_culex_infection_stochastic <- function(mod, f) {
+    invisible(.Call('_culex_set_f_culex_infection_stochastic', PACKAGE = 'culex', mod, f))
+}
+
+#' @title Get feeding rate for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @export
+get_f_culex_infection_stochastic <- function(mod) {
+    .Call('_culex_get_f_culex_infection_stochastic', PACKAGE = 'culex', mod)
+}
+
+#' @title Set feeding habit for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @param q a matrix (columns must sum to `1`; each column indicates proportion of bites allocated to each host species in that patch)
+#' @export
+set_q_culex_infection_stochastic <- function(mod, q) {
+    invisible(.Call('_culex_set_q_culex_infection_stochastic', PACKAGE = 'culex', mod, q))
+}
+
+#' @title Get feeding habit for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @export
+get_q_culex_infection_stochastic <- function(mod) {
+    .Call('_culex_get_q_culex_infection_stochastic', PACKAGE = 'culex', mod)
+}
+
+#' @title Set kappa for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @param kappa a matrix (each column indicates net infectiousness of each host species in that patch)
+#' @export
+set_kappa_culex_infection_stochastic <- function(mod, kappa) {
+    invisible(.Call('_culex_set_kappa_culex_infection_stochastic', PACKAGE = 'culex', mod, kappa))
+}
+
+#' @title Get kappa for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @export
+get_kappa_culex_infection_stochastic <- function(mod) {
+    .Call('_culex_get_kappa_culex_infection_stochastic', PACKAGE = 'culex', mod)
+}
+
+#' @title Set susceptible adults for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @param A a row vector
+#' @export
+set_AS_culex_infection_stochastic <- function(mod, A) {
+    invisible(.Call('_culex_set_AS_culex_infection_stochastic', PACKAGE = 'culex', mod, A))
+}
+
+#' @title Get susceptible adults for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @export
+get_AS_culex_infection_stochastic <- function(mod) {
+    .Call('_culex_get_AS_culex_infection_stochastic', PACKAGE = 'culex', mod)
+}
+
+#' @title Set incubating adults for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @param A a matrix
+#' @export
+set_AE_culex_infection_stochastic <- function(mod, A) {
+    invisible(.Call('_culex_set_AE_culex_infection_stochastic', PACKAGE = 'culex', mod, A))
+}
+
+#' @title Get incubating adults for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @export
+get_AE_culex_infection_stochastic <- function(mod) {
+    .Call('_culex_get_AE_culex_infection_stochastic', PACKAGE = 'culex', mod)
+}
+
+#' @title Set infectious adults for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @param A a row vector
+#' @export
+set_AI_culex_infection_stochastic <- function(mod, A) {
+    invisible(.Call('_culex_set_AI_culex_infection_stochastic', PACKAGE = 'culex', mod, A))
+}
+
+#' @title Get infectious adults for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @export
+get_AI_culex_infection_stochastic <- function(mod) {
+    .Call('_culex_get_AI_culex_infection_stochastic', PACKAGE = 'culex', mod)
+}
+
+#' @title Set eggs for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @param E a matrix
+#' @export
+set_E_culex_infection_stochastic <- function(mod, E) {
+    invisible(.Call('_culex_set_E_culex_infection_stochastic', PACKAGE = 'culex', mod, E))
+}
+
+#' @title Get eggs for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @export
+get_E_culex_infection_stochastic <- function(mod) {
+    .Call('_culex_get_E_culex_infection_stochastic', PACKAGE = 'culex', mod)
+}
+
+#' @title Set infected eggs for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @param E a matrix
+#' @export
+set_EI_culex_infection_stochastic <- function(mod, E) {
+    invisible(.Call('_culex_set_EI_culex_infection_stochastic', PACKAGE = 'culex', mod, E))
+}
+
+#' @title Get infected eggs for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @export
+get_EI_culex_infection_stochastic <- function(mod) {
+    .Call('_culex_get_EI_culex_infection_stochastic', PACKAGE = 'culex', mod)
+}
+
+#' @title Set larvae for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @param L a matrix
+#' @export
+set_L_culex_infection_stochastic <- function(mod, L) {
+    invisible(.Call('_culex_set_L_culex_infection_stochastic', PACKAGE = 'culex', mod, L))
+}
+
+#' @title Get larvae for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @export
+get_L_culex_infection_stochastic <- function(mod) {
+    .Call('_culex_get_L_culex_infection_stochastic', PACKAGE = 'culex', mod)
+}
+
+#' @title Set infected larvae for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @param L a matrix
+#' @export
+set_LI_culex_infection_stochastic <- function(mod, L) {
+    invisible(.Call('_culex_set_LI_culex_infection_stochastic', PACKAGE = 'culex', mod, L))
+}
+
+#' @title Get infected larvae for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @export
+get_LI_culex_infection_stochastic <- function(mod) {
+    .Call('_culex_get_LI_culex_infection_stochastic', PACKAGE = 'culex', mod)
+}
+
+#' @title Set pupae for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @param P a matrix
+#' @export
+set_P_culex_infection_stochastic <- function(mod, P) {
+    invisible(.Call('_culex_set_P_culex_infection_stochastic', PACKAGE = 'culex', mod, P))
+}
+
+#' @title Get pupae for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @export
+get_P_culex_infection_stochastic <- function(mod) {
+    .Call('_culex_get_P_culex_infection_stochastic', PACKAGE = 'culex', mod)
+}
+
+#' @title Set infected pupae for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @param P a matrix
+#' @export
+set_PI_culex_infection_stochastic <- function(mod, P) {
+    invisible(.Call('_culex_set_PI_culex_infection_stochastic', PACKAGE = 'culex', mod, P))
+}
+
+#' @title Get infected pupae for stochastic culex infection model
+#' @param mod an [methods::externalptr-class] object
+#' @export
+get_PI_culex_infection_stochastic <- function(mod) {
+    .Call('_culex_get_PI_culex_infection_stochastic', PACKAGE = 'culex', mod)
 }
 
 #' @title Differential equations describing change in delays
