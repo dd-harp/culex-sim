@@ -97,7 +97,7 @@ struct culex_inf {
 template <typename T>
 inline culex_inf<T>::culex_inf(const int p_, const std::vector<int>& tau_E_, const std::vector<int>& tau_L_, const std::vector<int>& tau_P_, const std::vector<int>& tau_EIP_, const double dt_, const arma::Mat<double>& psi_, const int n_species) :
   psi(psi_), step(0), p(p_), dt(dt_), 
-  f(n_species, arma::fill::zeros), q(n_species, p_, arma::fill::zeros), kappa(n_species, p_, arma::fill::zeros),
+  f(p, arma::fill::zeros), q(n_species, p_, arma::fill::zeros), kappa(n_species, p_, arma::fill::zeros),
   tau_E(tau_E_), tau_L(tau_L_), tau_P(tau_P_), tau_EIP(tau_EIP_)
 {
   int maxE = *max_element(tau_E.begin(), tau_E.end());
