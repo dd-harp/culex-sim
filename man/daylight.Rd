@@ -7,10 +7,10 @@
 daylight(t, pars)
 }
 \arguments{
+\item{t}{time}
+
 \item{pars}{a \link{list}}
 }
 \description{
 Photoperiod
-
-t time
 }

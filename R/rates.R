@@ -26,7 +26,7 @@ temperature <- function(t, pars){
 }
 
 #' @title Photoperiod
-#' @title t time
+#' @param t time
 #' @param pars a [list]
 #' @export
 daylight <- function(t, pars){

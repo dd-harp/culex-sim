@@ -27,7 +27,7 @@ We'll compare our discretized models to the DDE models developed in ["Uncovering
 We simulate over 5 years, first we solve the DDEs. The size of the discrete time step `dt` (and `maxstep`) are not used here but we specify it so all the parameters relevant to the time window are given in the same place.
 
 ```{r}
-tmax <- 365*5
+tmax <- 365*3
 A0 <- 12000
 t0 <- 0.0
 dt <- 0.1

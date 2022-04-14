@@ -1,5 +1,5 @@
 #' @title Model parameters
-#' @description Most of these parameters can be found at [https://github.com/davewi13/Temperate-Mosquito-DDE/blob/master/Chapter%202%20DDE%20code.f90].
+#' @description Most of these parameters can be found [here](https://github.com/davewi13/Temperate-Mosquito-DDE/blob/master/Chapter%202%20DDE%20code.f90).
 #' @param phi temperature phase
 #' @param lambda temperature A
 #' @param mu temperature M
