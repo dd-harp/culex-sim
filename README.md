@@ -16,8 +16,10 @@ Installing this package requires [RcppArmadillo](https://dirk.eddelbuettel.com/c
 
 You can install it either by cloning this repo and building from within RStudio, or directly via:
 
-    library(remotes)
-    remotes::install_github(repo = "dd-harp/culex-sim")
+```
+library(remotes)
+remotes::install_github(repo = "dd-harp/culex-sim", dependencies = TRUE)
+```
 
 # Documentation
 
