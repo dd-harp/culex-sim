@@ -24,3 +24,23 @@ remotes::install_github(repo = "dd-harp/culex-sim", dependencies = TRUE)
 # Documentation
 
 There are several vignettes in the package demonstrating use of the models.
+
+# Simulation
+
+To transform the delay differential equations into discrete time models, we note that
+the backward looking delays can be transformed into forward looking queues of completion
+times by first integrating the _o_rdinary differential equations for delay duration.
+
+These ODEs are of the form:
+
+```
+$\dot{\tau} = 1 - \frac{g(t)}{g(t - \tau(t))}$
+```
+
+Where $\tau$ is the length of the maturation delay; that is, the time that individuals
+maturing at time $t$ would have needed to wait before maturing (assuming survival). Because
+we want to know the time an individual needs to wait before maturing if entering a stage
+at time $t$, we first solve $\tau$ over a time horizon, discretize the solution to `dt`,
+and subtract $t - \tau$, to get the duration of the forward looking delay.
+
+![](man/figures/delays.pdf)
