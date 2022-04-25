@@ -205,19 +205,20 @@ inline void culex_inf<int>::update(const Rcpp::List& parameters) {
   }
 
   // egg laying
+  double ovi = oviposition(dia, gon, parameters);
   arma::Row<int> lambda(this->p, arma::fill::zeros);
   int i{0};
-  lambda.for_each([&i, this, dia, gon, pvt, &parameters](arma::Row<int>::elem_type& val) {
+  lambda.for_each([&i, this, ovi, pvt](arma::Row<int>::elem_type& val) {
     double mosy = this->A_S(i) + arma::accu(this->A_E.col(i)) + (this->A_I(i) * (1.0 - pvt));
-    double lambda_mean = oviposition(dia, gon, parameters) * mosy * this->dt;
+    double lambda_mean = ovi * mosy * this->dt;
     val = R::rpois(lambda_mean);
     i++;
   });
   
   arma::Row<int> lambda_I(this->p, arma::fill::zeros);
   i = 0;
-  lambda_I.for_each([&i, this, dia, gon, pvt, &parameters](arma::Row<int>::elem_type& val) {
-    double lambda_mean = oviposition(dia, gon, parameters) * (this->A_I(i) * pvt) * this->dt;
+  lambda_I.for_each([&i, this, ovi, pvt](arma::Row<int>::elem_type& val) {
+    double lambda_mean = ovi * (this->A_I(i) * pvt) * this->dt;
     val = R::rpois(lambda_mean);
     i++;
   });
