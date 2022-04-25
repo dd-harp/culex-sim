@@ -34,7 +34,7 @@ times by first integrating the _o_rdinary differential equations for delay durat
 These ODEs are of the form:
 
 ```
-$\dot{\tau} = 1 - \frac{g(t)}{g(t - \tau(t))}$
+\dot{\tau} = 1 - \frac{g(t)}{g(t - \tau(t))}
 ```
 
 Where $\tau$ is the length of the maturation delay; that is, the time that individuals
@@ -43,4 +43,17 @@ we want to know the time an individual needs to wait before maturing if entering
 at time $t$, we first solve $\tau$ over a time horizon, discretize the solution to `dt`,
 and subtract $t - \tau$, to get the duration of the forward looking delay.
 
+The solutions to the delays are shown below, for the egg (E), larval (L), pupae (P),
+and extrinsic incubation period (EIP) stages.
+
 ![](man/figures/delays.png)
+
+Using these trajectories as inputs, new arrivials to a stage can be queued to complete
+it after an appropriate number of time steps has passed (assuming they survive). Below
+we show a comparison of 50 stochastic trajectories sampled from the discrete time model
+compared to the solution of the original delay differential equation model (dashed line).
+Due to the large population size, the stochastic trajectories cluster around the deterministic
+solution. When populations are smaller, significant deviations from the deterministic model
+(extinction) are expected.
+
+![](man/figures/trajectory.png)
