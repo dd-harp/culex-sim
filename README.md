@@ -43,4 +43,4 @@ we want to know the time an individual needs to wait before maturing if entering
 at time $t$, we first solve $\tau$ over a time horizon, discretize the solution to `dt`,
 and subtract $t - \tau$, to get the duration of the forward looking delay.
 
-![](man/figures/delays.pdf)
+![](man/figures/delays.png)
