@@ -21,15 +21,11 @@ library(remotes)
 remotes::install_github(repo = "dd-harp/culex-sim", dependencies = TRUE)
 ```
 
-# Documentation
-
-There are several vignettes in the package demonstrating use of the models.
-
-# Simulation
+# Example
 
 To transform the delay differential equations into discrete time models, we note that
 the backward looking delays can be transformed into forward looking queues of completion
-times by first integrating the _o_rdinary differential equations for delay duration.
+times by first integrating the *o*rdinary differential equations for delay duration.
 
 These ODEs are of the form:
 
@@ -57,3 +53,7 @@ solution. When populations are smaller, significant deviations from the determin
 (extinction) are expected.
 
 ![](man/figures/trajectory.png)
+
+# Documentation
+
+There are several vignettes in the package demonstrating use of the models.
