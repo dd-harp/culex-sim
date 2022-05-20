@@ -29,9 +29,9 @@ times by first integrating the *o*rdinary differential equations for delay durat
 
 These ODEs are of the form:
 
-```
+$$
 \dot{\tau} = 1 - \frac{g(t)}{g(t - \tau(t))}
-```
+$$
 
 Where $\tau$ is the length of the maturation delay; that is, the time that individuals
 maturing at time $t$ would have needed to wait before maturing (assuming survival). Because
