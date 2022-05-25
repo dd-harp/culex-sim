@@ -29,7 +29,7 @@ temperature <- function(t, pars){
 #' @param t time
 #' @param pars a [list]
 #' @export
-daylight <- function(t, pars){
+photoperiod <- function(t, pars){
   
   L = pars[["L"]] # latitude (51 in thesis)
   
