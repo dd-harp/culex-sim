@@ -8,12 +8,12 @@
 //' @param tau_L vector of larvae delays
 //' @param tau_P vector of pupae delays
 //' @param dt size of time step
-//' @param psi adult movement matrix
+//' @param parameters a [list] of parameters
 //' @export
 // [[Rcpp::export]]
-Rcpp::XPtr<culex_stochastic> create_culex_stochastic(const int p, const std::vector<int>& tau_E, const std::vector<int>& tau_L, const std::vector<int>& tau_P, const double dt, const arma::Mat<double>& psi) {
+Rcpp::XPtr<culex_stochastic> create_culex_stochastic(const std::vector<int>& tau_E, const std::vector<int>& tau_L, const std::vector<int>& tau_P, const double dt, const Rcpp::List& parameters) {
   return Rcpp::XPtr<culex_stochastic>(
-    new culex_stochastic(p, tau_E, tau_L, tau_P, dt, psi),
+    new culex_stochastic(tau_E, tau_L, tau_P, dt, parameters),
     true
   );
 };

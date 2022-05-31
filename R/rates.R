@@ -177,6 +177,30 @@ gonotrophic <- function(temp, pars){
   return(1.0 / grate)
 }
 
+# gonotrophic_modified <- function(d, temp, pars){
+#   
+#   q1 = pars[["q1"]] # KG
+#   q2 = pars[["q2"]] # QG
+#   q3 = pars[["q3"]] # BG
+#   gon_min = pars[["gon_min"]]
+#   
+#   # calculate gonotrophic cycle length
+#   if(temp < 0.0){
+#     grate = 0.0333
+#   } else {
+#     grate = q1 / (1 + q2*exp(-q3*temp))
+#   }
+#   
+#   if(grate < gon_min){
+#     grate = gon_min
+#   }
+#   
+#   grate <- grate * d
+#   
+#   return(1.0 / grate)
+# }
+
+
 #' @title Egg laying rate
 #' @param d diapause
 #' @param G duration of gonotrophic cycle
@@ -191,6 +215,17 @@ oviposition <- function(d, G, pars){
   
   return(ovi)
 }
+
+# oviposition_modified <- function(G, pars){
+#   
+#   max_egg = pars[["max_egg"]]
+#   
+#   egg_raft = max_egg * 0.5
+#   ovi = egg_raft / G
+#   
+#   return(ovi)
+# }
+
 
 #' @title Egg maturation rate
 #' @param temp temperature

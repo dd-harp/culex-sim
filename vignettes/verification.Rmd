@@ -48,7 +48,15 @@ traj_dt <- melt(traj_dt, id.vars = "day")
 setnames(traj_dt, old = "variable", new = "stage")
 ```
 
-Now we'll solve the ODEs that describe the stage durations over that time interval, which are input to the discretized models. We use `ode` from the "deSolve" package for this.
+Now we need to integrate the ODEs describing maturation delays. We integrate them
+past the last time step, because the value on the last time step is how long individuals
+maturation at that time would have needed to wait (backwards-looking). We need the
+time that individuals entering the stage at that time step need to wait before leaving
+(forward-looking), so we subtract the delay from the time to get the entry times,
+and pair those with the delay associated with entry into the stage at that time.
+
+We use it to get 3 vectors, each one gives the number of time steps individuals
+entering that stage on that step need to wait before maturation.
 
 ```{r}
 # delays at t=0
@@ -79,11 +87,32 @@ tauL <- as.integer(tau_traj[step_forward_L %in% 1:maxstep, "L"][[1]])
 tauP <- as.integer(tau_traj[step_forward_P %in% 1:maxstep, "P"][[1]])
 ```
 
+Now we must precompute the temperature and diapause percentage, which are used as external forcing to the simulation. Diapause
+depends on photoperiod.
+
+```{r}
+# compute temperature and diapause input
+time_steps <- cumsum(rep(dt, maxstep)) - dt
+temp_steps <- vapply(X = time_steps, FUN = function(t) {temperature(t = t, pars = parameters)}, FUN.VALUE = numeric(1), USE.NAMES = FALSE)
+dia_steps <- vapply(X = seq_along(time_steps), FUN = function(t) {
+  pp <- photoperiod(time_steps[t], parameters)
+  pp_lag <- photoperiod(time_steps[t] - 1.0, parameters)
+  if (pp > pp_lag) {
+    return(diapause_spring(pp))
+  } else {
+    return(diapause_autumn(pp))
+  }
+}, FUN.VALUE = numeric(1), USE.NAMES = FALSE)
+
+parameters$temperature <- matrix(data = temp_steps, nrow = 1)
+parameters$diapause <- matrix(data = dia_steps, nrow = 1)
+```
+
 Let's draw 10 stochastic trajectories.
 
 ```{r}
 out <- parallel::mclapply(X = 1:10, FUN = function(runid) {
-  mod <- create_culex_stochastic(p = 1, tau_E = tauE, tau_L = tauL, tau_P = tauP, dt = dt, psi = diag(1))
+  mod <- create_culex_stochastic(tau_E = tauE, tau_L = tauL, tau_P = tauP, dt = dt, parameters = parameters)
   set_A_stochastic(mod = mod, A = A0)
   
   out <- data.table(day = rep(1:tmax, each = 4), stage = rep(c("E","L","P","A"), tmax), value = NaN)
@@ -105,15 +134,38 @@ out <- parallel::mclapply(X = 1:10, FUN = function(runid) {
   return(out)
 })
 
-out_sum <- do.call(rbind, out)
+out_sto <- do.call(rbind, out)
+```
+
+Now we solve one deterministic trajectory.
+
+```{r}
+mod <- create_culex_deterministic(tau_E = tauE, tau_L = tauL, tau_P = tauP, dt = dt, parameters = parameters)
+set_A_deterministic(mod = mod, A = A0)
+
+out_det <- data.table(day = rep(1:tmax, each = 4), stage = rep(c("E","L","P","A"), tmax), value = NaN)
+setkey(out_det, "day")
+out_i <- 1L
+
+for (i in 1:maxstep) {
+  step_culex_deterministic(mod = mod, parameters = parameters)
+  if ((i-1) %% (1/dt) == 0) {
+    out_det[day == out_i & stage == "E", "value" := as.vector(get_E_deterministic(mod))]
+    out_det[day == out_i & stage == "L", "value" := as.vector(get_L_deterministic(mod))]
+    out_det[day == out_i & stage == "P", "value" := as.vector(get_P_deterministic(mod))]
+    out_det[day == out_i & stage == "A", "value" := as.vector(get_A_deterministic(mod))]
+    out_i <- out_i + 1L
+  }
+}
 ```
 
 Plot the output.
 
 ```{r}
-ggplot(data = out_sum) +
+ggplot(data = out_sto) +
   geom_line(aes(x = day, y = value, group = interaction(run, stage), color = stage), alpha = 0.35) +
-  geom_line(data=traj_dt, aes(x=day,y=value,color=stage), lty=2) +
+  geom_line(data=traj_dt, aes(x=day,y=value,color=stage), lty = 2) +
+  geom_line(data=out_det, aes(x=day,y=value,color=stage), lty = 3, size = 2) +
   facet_wrap(. ~ stage, scales = "free") +
   theme_bw()
 ```

@@ -14,18 +14,17 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // create_culex_deterministic
-Rcpp::XPtr<culex_deterministic> create_culex_deterministic(const int p, const std::vector<int>& tau_E, const std::vector<int>& tau_L, const std::vector<int>& tau_P, const double dt, const arma::Mat<double>& psi);
-RcppExport SEXP _culex_create_culex_deterministic(SEXP pSEXP, SEXP tau_ESEXP, SEXP tau_LSEXP, SEXP tau_PSEXP, SEXP dtSEXP, SEXP psiSEXP) {
+Rcpp::XPtr<culex_deterministic> create_culex_deterministic(const std::vector<int>& tau_E, const std::vector<int>& tau_L, const std::vector<int>& tau_P, const double dt, const Rcpp::List& parameters);
+RcppExport SEXP _culex_create_culex_deterministic(SEXP tau_ESEXP, SEXP tau_LSEXP, SEXP tau_PSEXP, SEXP dtSEXP, SEXP parametersSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const int >::type p(pSEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type tau_E(tau_ESEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type tau_L(tau_LSEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type tau_P(tau_PSEXP);
     Rcpp::traits::input_parameter< const double >::type dt(dtSEXP);
-    Rcpp::traits::input_parameter< const arma::Mat<double>& >::type psi(psiSEXP);
-    rcpp_result_gen = Rcpp::wrap(create_culex_deterministic(p, tau_E, tau_L, tau_P, dt, psi));
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type parameters(parametersSEXP);
+    rcpp_result_gen = Rcpp::wrap(create_culex_deterministic(tau_E, tau_L, tau_P, dt, parameters));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -96,20 +95,19 @@ BEGIN_RCPP
 END_RCPP
 }
 // create_culex_infection_deterministic
-Rcpp::XPtr<culex_infection_deterministic> create_culex_infection_deterministic(const int p, const std::vector<int>& tau_E, const std::vector<int>& tau_L, const std::vector<int>& tau_P, const std::vector<int>& tau_EIP, const double dt, const arma::Mat<double>& psi, const int n_species);
-RcppExport SEXP _culex_create_culex_infection_deterministic(SEXP pSEXP, SEXP tau_ESEXP, SEXP tau_LSEXP, SEXP tau_PSEXP, SEXP tau_EIPSEXP, SEXP dtSEXP, SEXP psiSEXP, SEXP n_speciesSEXP) {
+Rcpp::XPtr<culex_infection_deterministic> create_culex_infection_deterministic(const std::vector<int>& tau_E, const std::vector<int>& tau_L, const std::vector<int>& tau_P, const std::vector<int>& tau_EIP, const double dt, const Rcpp::List& parameters, const int n_species);
+RcppExport SEXP _culex_create_culex_infection_deterministic(SEXP tau_ESEXP, SEXP tau_LSEXP, SEXP tau_PSEXP, SEXP tau_EIPSEXP, SEXP dtSEXP, SEXP parametersSEXP, SEXP n_speciesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const int >::type p(pSEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type tau_E(tau_ESEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type tau_L(tau_LSEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type tau_P(tau_PSEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type tau_EIP(tau_EIPSEXP);
     Rcpp::traits::input_parameter< const double >::type dt(dtSEXP);
-    Rcpp::traits::input_parameter< const arma::Mat<double>& >::type psi(psiSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type parameters(parametersSEXP);
     Rcpp::traits::input_parameter< const int >::type n_species(n_speciesSEXP);
-    rcpp_result_gen = Rcpp::wrap(create_culex_infection_deterministic(p, tau_E, tau_L, tau_P, tau_EIP, dt, psi, n_species));
+    rcpp_result_gen = Rcpp::wrap(create_culex_infection_deterministic(tau_E, tau_L, tau_P, tau_EIP, dt, parameters, n_species));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -389,20 +387,19 @@ BEGIN_RCPP
 END_RCPP
 }
 // create_culex_infection_stochastic
-Rcpp::XPtr<culex_infection_stochastic> create_culex_infection_stochastic(const int p, const std::vector<int>& tau_E, const std::vector<int>& tau_L, const std::vector<int>& tau_P, const std::vector<int>& tau_EIP, const double dt, const arma::Mat<double>& psi, const int n_species);
-RcppExport SEXP _culex_create_culex_infection_stochastic(SEXP pSEXP, SEXP tau_ESEXP, SEXP tau_LSEXP, SEXP tau_PSEXP, SEXP tau_EIPSEXP, SEXP dtSEXP, SEXP psiSEXP, SEXP n_speciesSEXP) {
+Rcpp::XPtr<culex_infection_stochastic> create_culex_infection_stochastic(const std::vector<int>& tau_E, const std::vector<int>& tau_L, const std::vector<int>& tau_P, const std::vector<int>& tau_EIP, const double dt, const Rcpp::List& parameters, const int n_species);
+RcppExport SEXP _culex_create_culex_infection_stochastic(SEXP tau_ESEXP, SEXP tau_LSEXP, SEXP tau_PSEXP, SEXP tau_EIPSEXP, SEXP dtSEXP, SEXP parametersSEXP, SEXP n_speciesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const int >::type p(pSEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type tau_E(tau_ESEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type tau_L(tau_LSEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type tau_P(tau_PSEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type tau_EIP(tau_EIPSEXP);
     Rcpp::traits::input_parameter< const double >::type dt(dtSEXP);
-    Rcpp::traits::input_parameter< const arma::Mat<double>& >::type psi(psiSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type parameters(parametersSEXP);
     Rcpp::traits::input_parameter< const int >::type n_species(n_speciesSEXP);
-    rcpp_result_gen = Rcpp::wrap(create_culex_infection_stochastic(p, tau_E, tau_L, tau_P, tau_EIP, dt, psi, n_species));
+    rcpp_result_gen = Rcpp::wrap(create_culex_infection_stochastic(tau_E, tau_L, tau_P, tau_EIP, dt, parameters, n_species));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -682,18 +679,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // create_culex_stochastic
-Rcpp::XPtr<culex_stochastic> create_culex_stochastic(const int p, const std::vector<int>& tau_E, const std::vector<int>& tau_L, const std::vector<int>& tau_P, const double dt, const arma::Mat<double>& psi);
-RcppExport SEXP _culex_create_culex_stochastic(SEXP pSEXP, SEXP tau_ESEXP, SEXP tau_LSEXP, SEXP tau_PSEXP, SEXP dtSEXP, SEXP psiSEXP) {
+Rcpp::XPtr<culex_stochastic> create_culex_stochastic(const std::vector<int>& tau_E, const std::vector<int>& tau_L, const std::vector<int>& tau_P, const double dt, const Rcpp::List& parameters);
+RcppExport SEXP _culex_create_culex_stochastic(SEXP tau_ESEXP, SEXP tau_LSEXP, SEXP tau_PSEXP, SEXP dtSEXP, SEXP parametersSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const int >::type p(pSEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type tau_E(tau_ESEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type tau_L(tau_LSEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type tau_P(tau_PSEXP);
     Rcpp::traits::input_parameter< const double >::type dt(dtSEXP);
-    Rcpp::traits::input_parameter< const arma::Mat<double>& >::type psi(psiSEXP);
-    rcpp_result_gen = Rcpp::wrap(create_culex_stochastic(p, tau_E, tau_L, tau_P, dt, psi));
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type parameters(parametersSEXP);
+    rcpp_result_gen = Rcpp::wrap(create_culex_stochastic(tau_E, tau_L, tau_P, dt, parameters));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -778,14 +774,14 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_culex_create_culex_deterministic", (DL_FUNC) &_culex_create_culex_deterministic, 6},
+    {"_culex_create_culex_deterministic", (DL_FUNC) &_culex_create_culex_deterministic, 5},
     {"_culex_step_culex_deterministic", (DL_FUNC) &_culex_step_culex_deterministic, 2},
     {"_culex_set_A_deterministic", (DL_FUNC) &_culex_set_A_deterministic, 2},
     {"_culex_get_A_deterministic", (DL_FUNC) &_culex_get_A_deterministic, 1},
     {"_culex_get_E_deterministic", (DL_FUNC) &_culex_get_E_deterministic, 1},
     {"_culex_get_L_deterministic", (DL_FUNC) &_culex_get_L_deterministic, 1},
     {"_culex_get_P_deterministic", (DL_FUNC) &_culex_get_P_deterministic, 1},
-    {"_culex_create_culex_infection_deterministic", (DL_FUNC) &_culex_create_culex_infection_deterministic, 8},
+    {"_culex_create_culex_infection_deterministic", (DL_FUNC) &_culex_create_culex_infection_deterministic, 7},
     {"_culex_step_culex_infection_deterministic", (DL_FUNC) &_culex_step_culex_infection_deterministic, 2},
     {"_culex_set_f_infection_deterministic", (DL_FUNC) &_culex_set_f_infection_deterministic, 2},
     {"_culex_get_f_infection_deterministic", (DL_FUNC) &_culex_get_f_infection_deterministic, 1},
@@ -811,7 +807,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_culex_get_P_infection_deterministic", (DL_FUNC) &_culex_get_P_infection_deterministic, 1},
     {"_culex_set_PI_infection_deterministic", (DL_FUNC) &_culex_set_PI_infection_deterministic, 2},
     {"_culex_get_PI_infection_deterministic", (DL_FUNC) &_culex_get_PI_infection_deterministic, 1},
-    {"_culex_create_culex_infection_stochastic", (DL_FUNC) &_culex_create_culex_infection_stochastic, 8},
+    {"_culex_create_culex_infection_stochastic", (DL_FUNC) &_culex_create_culex_infection_stochastic, 7},
     {"_culex_step_culex_infection_stochastic", (DL_FUNC) &_culex_step_culex_infection_stochastic, 2},
     {"_culex_set_f_infection_stochastic", (DL_FUNC) &_culex_set_f_infection_stochastic, 2},
     {"_culex_get_f_infection_stochastic", (DL_FUNC) &_culex_get_f_infection_stochastic, 1},
@@ -837,7 +833,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_culex_get_P_infection_stochastic", (DL_FUNC) &_culex_get_P_infection_stochastic, 1},
     {"_culex_set_PI_infection_stochastic", (DL_FUNC) &_culex_set_PI_infection_stochastic, 2},
     {"_culex_get_PI_infection_stochastic", (DL_FUNC) &_culex_get_PI_infection_stochastic, 1},
-    {"_culex_create_culex_stochastic", (DL_FUNC) &_culex_create_culex_stochastic, 6},
+    {"_culex_create_culex_stochastic", (DL_FUNC) &_culex_create_culex_stochastic, 5},
     {"_culex_step_culex_stochastic", (DL_FUNC) &_culex_step_culex_stochastic, 2},
     {"_culex_set_A_stochastic", (DL_FUNC) &_culex_set_A_stochastic, 2},
     {"_culex_get_A_stochastic", (DL_FUNC) &_culex_get_A_stochastic, 1},

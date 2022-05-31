@@ -4,11 +4,9 @@
 \alias{create_culex_deterministic}
 \title{Create deterministic culex model object}
 \usage{
-create_culex_deterministic(p, tau_E, tau_L, tau_P, dt, psi)
+create_culex_deterministic(tau_E, tau_L, tau_P, dt, parameters)
 }
 \arguments{
-\item{p}{number of patches}
-
 \item{tau_E}{vector of egg delays}
 
 \item{tau_L}{vector of larvae delays}
@@ -17,7 +15,9 @@ create_culex_deterministic(p, tau_E, tau_L, tau_P, dt, psi)
 
 \item{dt}{size of time step}
 
-\item{psi}{adult movement matrix}
+\item{parameters}{a \link{list} of parameters}
+
+\item{p}{number of patches}
 }
 \description{
 Create deterministic culex model object

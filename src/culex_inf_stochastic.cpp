@@ -3,23 +3,21 @@
 // ---------- stochastic model interface ----------
 
 //' @title Create stochastic culex infection model object
-//' @param p number of patches
 //' @param tau_E vector of egg delays
 //' @param tau_L vector of larvae delays
 //' @param tau_P vector of pupae delays
 //' @param tau_EIP vector of extrinsic incubation period delays
 //' @param dt size of time step
-//' @param psi adult movement matrix
+//' @param parameters a [list] of parameters
 //' @param n_species number of host species
 //' @export
 // [[Rcpp::export]]
 Rcpp::XPtr<culex_infection_stochastic> create_culex_infection_stochastic(
-    const int p, 
     const std::vector<int>& tau_E, const std::vector<int>& tau_L, const std::vector<int>& tau_P, const std::vector<int>& tau_EIP,
-    const double dt, const arma::Mat<double>& psi, const int n_species)
+    const double dt, const Rcpp::List& parameters, const int n_species)
 {
   return Rcpp::XPtr<culex_infection_stochastic>(
-    new culex_infection_stochastic(p, tau_E, tau_L, tau_P, tau_EIP, dt, psi, n_species),
+    new culex_infection_stochastic(tau_E, tau_L, tau_P, tau_EIP, dt, parameters, n_species),
     true
   );
 };
@@ -48,7 +46,7 @@ void set_f_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, cons
 // [[Rcpp::export]]
 arma::Row<double> get_f_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod) {
   return mod->f;
-} 
+}
 
 //' @title Set feeding habit for stochastic culex infection model
 //' @param mod an [methods::externalptr-class] object
@@ -65,7 +63,7 @@ void set_q_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, cons
 // [[Rcpp::export]]
 arma::Mat<double> get_q_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod) {
   return mod->q;
-} 
+}
 
 //' @title Set kappa for stochastic culex infection model
 //' @param mod an [methods::externalptr-class] object
@@ -82,7 +80,7 @@ void set_kappa_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod, 
 // [[Rcpp::export]]
 arma::Mat<double> get_kappa_infection_stochastic(Rcpp::XPtr<culex_infection_stochastic> mod) {
   return mod->kappa;
-} 
+}
 
 //' @title Set susceptible adults for stochastic culex infection model
 //' @param mod an [methods::externalptr-class] object

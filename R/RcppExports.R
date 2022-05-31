@@ -7,10 +7,10 @@
 #' @param tau_L vector of larvae delays
 #' @param tau_P vector of pupae delays
 #' @param dt size of time step
-#' @param psi adult movement matrix
+#' @param parameters a [list] of parameters
 #' @export
-create_culex_deterministic <- function(p, tau_E, tau_L, tau_P, dt, psi) {
-    .Call('_culex_create_culex_deterministic', PACKAGE = 'culex', p, tau_E, tau_L, tau_P, dt, psi)
+create_culex_deterministic <- function(tau_E, tau_L, tau_P, dt, parameters) {
+    .Call('_culex_create_culex_deterministic', PACKAGE = 'culex', tau_E, tau_L, tau_P, dt, parameters)
 }
 
 #' @title Step deterministic culex model
@@ -58,17 +58,16 @@ get_P_deterministic <- function(mod) {
 }
 
 #' @title Create deterministic culex infection model object
-#' @param p number of patches
 #' @param tau_E vector of egg delays
 #' @param tau_L vector of larvae delays
 #' @param tau_P vector of pupae delays
 #' @param tau_EIP vector of extrinsic incubation period delays
 #' @param dt size of time step
-#' @param psi adult movement matrix
+#' @param parameters a [list] of parameters
 #' @param n_species number of host species
 #' @export
-create_culex_infection_deterministic <- function(p, tau_E, tau_L, tau_P, tau_EIP, dt, psi, n_species) {
-    .Call('_culex_create_culex_infection_deterministic', PACKAGE = 'culex', p, tau_E, tau_L, tau_P, tau_EIP, dt, psi, n_species)
+create_culex_infection_deterministic <- function(tau_E, tau_L, tau_P, tau_EIP, dt, parameters, n_species) {
+    .Call('_culex_create_culex_infection_deterministic', PACKAGE = 'culex', tau_E, tau_L, tau_P, tau_EIP, dt, parameters, n_species)
 }
 
 #' @title Step deterministic culex infection model
@@ -260,17 +259,16 @@ get_PI_infection_deterministic <- function(mod) {
 }
 
 #' @title Create stochastic culex infection model object
-#' @param p number of patches
 #' @param tau_E vector of egg delays
 #' @param tau_L vector of larvae delays
 #' @param tau_P vector of pupae delays
 #' @param tau_EIP vector of extrinsic incubation period delays
 #' @param dt size of time step
-#' @param psi adult movement matrix
+#' @param parameters a [list] of parameters
 #' @param n_species number of host species
 #' @export
-create_culex_infection_stochastic <- function(p, tau_E, tau_L, tau_P, tau_EIP, dt, psi, n_species) {
-    .Call('_culex_create_culex_infection_stochastic', PACKAGE = 'culex', p, tau_E, tau_L, tau_P, tau_EIP, dt, psi, n_species)
+create_culex_infection_stochastic <- function(tau_E, tau_L, tau_P, tau_EIP, dt, parameters, n_species) {
+    .Call('_culex_create_culex_infection_stochastic', PACKAGE = 'culex', tau_E, tau_L, tau_P, tau_EIP, dt, parameters, n_species)
 }
 
 #' @title Step stochastic culex infection model
@@ -467,10 +465,10 @@ get_PI_infection_stochastic <- function(mod) {
 #' @param tau_L vector of larvae delays
 #' @param tau_P vector of pupae delays
 #' @param dt size of time step
-#' @param psi adult movement matrix
+#' @param parameters a [list] of parameters
 #' @export
-create_culex_stochastic <- function(p, tau_E, tau_L, tau_P, dt, psi) {
-    .Call('_culex_create_culex_stochastic', PACKAGE = 'culex', p, tau_E, tau_L, tau_P, dt, psi)
+create_culex_stochastic <- function(tau_E, tau_L, tau_P, dt, parameters) {
+    .Call('_culex_create_culex_stochastic', PACKAGE = 'culex', tau_E, tau_L, tau_P, dt, parameters)
 }
 
 #' @title Step stochastic culex model
