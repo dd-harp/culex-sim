@@ -49,75 +49,89 @@
 // tau_EIP: tau_EIP[t] gives the number of steps required for a new exposed mosquito A_E at step t to become infectious
 template <typename T>
 struct culex_inf {
-  
+
   arma::Mat<T> E;
   arma::Mat<T> L;
   arma::Mat<T> P;
-  
+
   arma::Mat<T> E_I;
   arma::Mat<T> L_I;
   arma::Mat<T> P_I;
-  
+
   arma::Row<T> A_S;
   arma::Mat<T> A_E;
   arma::Row<T> A_I;
-  
+
   arma::Mat<double> psi;
-  
+
   arma::SpMat<int> shiftE;
   arma::SpMat<int> shiftL;
   arma::SpMat<int> shiftP;
   arma::SpMat<int> shiftEIP;
-  
+
   int step;
   int p;
   double dt;
-  
+
   // feeding behavior and transmission
   arma::Row<double> f;
   arma::Mat<double> q;
   arma::Mat<double> kappa;
-  
+
   // delay vectors
   std::vector<int> tau_E;
   std::vector<int> tau_L;
   std::vector<int> tau_P;
   std::vector<int> tau_EIP;
   
-  // ctor/dtor
-  culex_inf(const int p_, const std::vector<int>& tau_E_, const std::vector<int>& tau_L_, const std::vector<int>& tau_P_, const std::vector<int>& tau_EIP_, const double dt_, const arma::Mat<double>& psi_, const int n_species);
-  ~culex_inf() = default;
+  // rate functions
+  mortality_rate_fn mort_egg;
+  mortality_rate_fn mort_larvae;
+  mortality_rate_fn mort_pupae;
+  mortality_rate_fn mort_adult;
   
+  gonotrophic_fn gonotrophic_cycle;
+  oviposition_fn oviposition;
+  
+  // external forcing
+  arma::Mat<double> temperature;
+  arma::Mat<double> diapause;
+
+  // ctor/dtor
+  culex_inf(const std::vector<int>& tau_E_, const std::vector<int>& tau_L_, const std::vector<int>& tau_P_, const std::vector<int>& tau_EIP_, const double dt_, const Rcpp::List& parameters, const int n_species);
+  ~culex_inf() = default;
+
   // methods
   void update(const Rcpp::List& parameters);
-  
+
 };
 
 // constructor
 template <typename T>
-inline culex_inf<T>::culex_inf(const int p_, const std::vector<int>& tau_E_, const std::vector<int>& tau_L_, const std::vector<int>& tau_P_, const std::vector<int>& tau_EIP_, const double dt_, const arma::Mat<double>& psi_, const int n_species) :
-  psi(psi_), step(0), p(p_), dt(dt_), 
-  f(p, arma::fill::zeros), q(n_species, p_, arma::fill::zeros), kappa(n_species, p_, arma::fill::zeros),
-  tau_E(tau_E_), tau_L(tau_L_), tau_P(tau_P_), tau_EIP(tau_EIP_)
+inline culex_inf<T>::culex_inf(const std::vector<int>& tau_E_, const std::vector<int>& tau_L_, const std::vector<int>& tau_P_, const std::vector<int>& tau_EIP_, const double dt_, const Rcpp::List& parameters, const int n_species) :
+  psi(Rcpp::as<arma::Mat<double>>(parameters["psi"])), step(0), p(Rcpp::as<int>(parameters["n_patch"])),
+  dt(dt_), f(p, arma::fill::zeros), q(n_species, p, arma::fill::zeros), kappa(n_species, p, arma::fill::zeros),
+  tau_E(tau_E_), tau_L(tau_L_), tau_P(tau_P_), tau_EIP(tau_EIP_),
+  temperature(Rcpp::as<arma::Mat<double>>(parameters["temperature"])), diapause(Rcpp::as<arma::Mat<double>>(parameters["diapause"]))
 {
   int maxE = *max_element(tau_E.begin(), tau_E.end());
   int maxL = *max_element(tau_L.begin(), tau_L.end());
   int maxP = *max_element(tau_P.begin(), tau_P.end());
   int maxEIP = *max_element(tau_EIP.begin(), tau_EIP.end());
-  
+
   // state
   E = arma::Mat<T>(maxE, p, arma::fill::zeros);
   L = arma::Mat<T>(maxL, p, arma::fill::zeros);
   P = arma::Mat<T>(maxP, p, arma::fill::zeros);
-  
+
   E_I = arma::Mat<T>(maxE, p, arma::fill::zeros);
   L_I = arma::Mat<T>(maxL, p, arma::fill::zeros);
   P_I = arma::Mat<T>(maxP, p, arma::fill::zeros);
-  
+
   A_S = arma::Row<T>(p, arma::fill::zeros);
   A_E = arma::Mat<T>(maxEIP, p, arma::fill::zeros);
   A_I = arma::Row<T>(p, arma::fill::zeros);
-  
+
   // shift matrices (multiply on left)
   arma::umat fillE(2, maxE);
   for (auto i = 0u; i < (maxE - 1); ++i) {
@@ -126,7 +140,7 @@ inline culex_inf<T>::culex_inf(const int p_, const std::vector<int>& tau_E_, con
   }
   arma::Col<int> fillEvals(maxE, arma::fill::ones);
   shiftE = arma::SpMat<int>(fillE, fillEvals, maxE, maxE);
-  
+
   arma::umat fillL(2, maxL);
   for (auto i = 0u; i < (maxL - 1); ++i) {
     fillL(0, i) = i;
@@ -134,7 +148,7 @@ inline culex_inf<T>::culex_inf(const int p_, const std::vector<int>& tau_E_, con
   }
   arma::Col<int> fillLvals(maxL, arma::fill::ones);
   shiftL = arma::SpMat<int>(fillL, fillLvals, maxL, maxL);
-  
+
   arma::umat fillP(2, maxP);
   for (auto i = 0u; i < (maxP - 1); ++i) {
     fillP(0, i) = i;
@@ -142,7 +156,7 @@ inline culex_inf<T>::culex_inf(const int p_, const std::vector<int>& tau_E_, con
   }
   arma::Col<int> fillPvals(maxP, arma::fill::ones);
   shiftP = arma::SpMat<int>(fillP, fillPvals, maxP, maxP);
-  
+
   arma::umat fillEIP(2, maxEIP);
   for (auto i = 0u; i < (maxEIP - 1); ++i) {
     fillEIP(0, i) = i;
@@ -151,6 +165,15 @@ inline culex_inf<T>::culex_inf(const int p_, const std::vector<int>& tau_E_, con
   arma::Col<int> fillEIPvals(maxEIP, arma::fill::ones);
   shiftEIP = arma::SpMat<int>(fillEIP, fillEIPvals, maxEIP, maxEIP);
   
+  // rate functions
+  mort_egg = make_egg_mortality_rate_ewing(parameters);
+  mort_larvae = make_larvae_mortality_rate_ewing(parameters);
+  mort_pupae = make_pupae_mortality_rate_ewing(parameters);
+  mort_adult = make_adult_mortality_rate_ewing(parameters);
+  
+  gonotrophic_cycle = make_gonotrophic_ewing(parameters);
+  oviposition = make_oviposition_ewing(parameters);
+
 };
 
 // stochastic update
@@ -173,56 +196,91 @@ inline void culex_inf<int>::update(const Rcpp::List& parameters) {
   double p1 = parameters["p1"];
   double pvt = parameters["pvt"];
 
+  // // temperature
+  // double temp = temperature(tnow, parameters);
+  // 
+  // // photoperiod
+  // double pp = photoperiod(tnow, parameters);
+  // double pp_1 = photoperiod(tnow - 1.0, parameters);
+  // 
+  // // gonotrophic cycle
+  // double gon = gonotrophic(temp, parameters);
+  // 
+  // // mortality
+  // double death_egg = death_egg_rate(temp, parameters);
+  // double death_larvae = death_larvae_rate(temp, parameters);
+  // double death_pupae = death_pupae_rate(temp, parameters);
+  // double death_adult = death_adult_rate(temp, parameters);
+  
   // temperature
-  double temp = temperature(tnow, parameters);
-
-  // photoperiod
-  double pp = photoperiod(tnow, parameters);
-  double pp_1 = photoperiod(tnow - 1.0, parameters);
-
+  arma::Col<double> temp = this->temperature.col(step);
+  
+  // diapause
+  arma::Col<double> dia = this->diapause.col(step);
+  
   // gonotrophic cycle
-  double gon = gonotrophic(temp, parameters);
-
+  arma::Col<double> gon = this->gonotrophic_cycle(temp, dia);
+  
+  // oviposition
+  arma::Col<double> ovi = this->oviposition(gon);
+  
   // mortality
-  double death_egg = death_egg_rate(temp, parameters);
-  double death_larvae = death_larvae_rate(temp, parameters);
-  double death_pupae = death_pupae_rate(temp, parameters);
-  double death_adult = death_adult_rate(temp, parameters);
+  arma::Col<double> death_egg = this->mort_egg(temp);
+  arma::Col<double> death_larvae = this->mort_larvae(temp);
+  arma::Col<double> death_pupae = this->mort_pupae(temp);
+  arma::Col<double> death_adult = this->mort_adult(temp);
 
   // larval mortality depends on total larvae (both S and I)
   arma::Row<int> larvae_tot = arma::sum(this->L, 0) + arma::sum(this->L_I, 0);
-  std::vector<double> death_larvae_tot(this->p, death_larvae);
+  arma::Col<double> death_larvae_dd = death_larvae;
   for (auto i = 0u; i < this->p; ++i) {
-    death_larvae_tot[i] += p0 * larvae_tot(i) / (p1 + larvae_tot(i));
+    death_larvae_dd(i) += p0 * larvae_tot(i) / (p1 + larvae_tot(i));
   }
 
-  // diapause and egg laying
-  double dia;
-  if (pp > pp_1) {
-    dia = diapause_spring(pp);
-  } else {
-    dia = diapause_autumn(pp);
-  }
+  // // diapause and egg laying
+  // double dia;
+  // if (pp > pp_1) {
+  //   dia = diapause_spring(pp);
+  // } else {
+  //   dia = diapause_autumn(pp);
+  // }
 
   // egg laying
-  double ovi = oviposition(dia, gon, parameters);
+  // double ovi = oviposition(dia, gon, parameters);
+  // arma::Row<int> lambda(this->p, arma::fill::zeros);
+  // int i{0};
+  // lambda.for_each([&i, this, ovi, pvt](arma::Row<int>::elem_type& val) {
+  //   double mosy = this->A_S(i) + arma::accu(this->A_E.col(i)) + (this->A_I(i) * (1.0 - pvt));
+  //   double lambda_mean = ovi * mosy * this->dt;
+  //   val = R::rpois(lambda_mean);
+  //   i++;
+  // });
+  
   arma::Row<int> lambda(this->p, arma::fill::zeros);
   int i{0};
-  lambda.for_each([&i, this, ovi, pvt](arma::Row<int>::elem_type& val) {
+  lambda.for_each([&i, this, &ovi, pvt](arma::Row<int>::elem_type& val) {
     double mosy = this->A_S(i) + arma::accu(this->A_E.col(i)) + (this->A_I(i) * (1.0 - pvt));
-    double lambda_mean = ovi * mosy * this->dt;
+    double lambda_mean = ovi(i) * mosy * this->dt;
     val = R::rpois(lambda_mean);
     i++;
   });
+
+  // arma::Row<int> lambda_I(this->p, arma::fill::zeros);
+  // i = 0;
+  // lambda_I.for_each([&i, this, ovi, pvt](arma::Row<int>::elem_type& val) {
+  //   double lambda_mean = ovi * (this->A_I(i) * pvt) * this->dt;
+  //   val = R::rpois(lambda_mean);
+  //   i++;
+  // });
   
   arma::Row<int> lambda_I(this->p, arma::fill::zeros);
   i = 0;
-  lambda_I.for_each([&i, this, ovi, pvt](arma::Row<int>::elem_type& val) {
-    double lambda_mean = ovi * (this->A_I(i) * pvt) * this->dt;
+  lambda_I.for_each([&i, this, &ovi, pvt](arma::Row<int>::elem_type& val) {
+    double lambda_mean = ovi(i) * (this->A_I(i) * pvt) * this->dt;
     val = R::rpois(lambda_mean);
     i++;
   });
-  
+
   // infections
   arma::Row<double> h = this->f % arma::sum(this->q % this->kappa, 0);
   arma::Row<int> S2E(this->p, arma::fill::zeros);
@@ -230,23 +288,24 @@ inline void culex_inf<int>::update(const Rcpp::List& parameters) {
     S2E(i) = R::rbinom(this->A_S(i), R::pexp(h(i) * this->dt, 1.0, 1, 0));
   }
   this->A_S -= S2E;
-  
+
   // survival
-  double surv = R::pexp(death_egg * dt, 1.0, 0, 0);
-  this->E.for_each([surv](arma::Mat<int>::elem_type& val) {
-    if (val > 0) {
-      val = R::rbinom(val, surv);
-    }
-  });
-  this->E_I.for_each([surv](arma::Mat<int>::elem_type& val) {
-    if (val > 0) {
-      val = R::rbinom(val, surv);
-    }
-  });
+  // double surv = R::pexp(death_egg * dt, 1.0, 0, 0);
+  // this->E.for_each([surv](arma::Mat<int>::elem_type& val) {
+  //   if (val > 0) {
+  //     val = R::rbinom(val, surv);
+  //   }
+  // });
+  // this->E_I.for_each([surv](arma::Mat<int>::elem_type& val) {
+  //   if (val > 0) {
+  //     val = R::rbinom(val, surv);
+  //   }
+  // });
   
+  // egg survival
   i = 0;
-  this->L.each_col([&death_larvae_tot, &i, dt = this->dt](arma::Col<int>& val) {
-    double surv = R::pexp(death_larvae_tot[i] * dt, 1.0, 0, 0);
+  this->E.each_col([&i, &death_egg, dt = this->dt](arma::Col<int>& val) {
+    double surv = R::pexp(death_egg(i) * dt, 1.0, 0, 0);
     val.for_each([surv](arma::Col<int>::elem_type& val) {
       if (val > 0) {
         val = R::rbinom(val, surv);
@@ -256,8 +315,8 @@ inline void culex_inf<int>::update(const Rcpp::List& parameters) {
   });
   
   i = 0;
-  this->L_I.each_col([&death_larvae_tot, &i, dt = this->dt](arma::Col<int>& val) {
-    double surv = R::pexp(death_larvae_tot[i] * dt, 1.0, 0, 0);
+  this->E_I.each_col([&i, &death_egg, dt = this->dt](arma::Col<int>& val) {
+    double surv = R::pexp(death_egg(i) * dt, 1.0, 0, 0);
     val.for_each([surv](arma::Col<int>::elem_type& val) {
       if (val > 0) {
         val = R::rbinom(val, surv);
@@ -266,40 +325,144 @@ inline void culex_inf<int>::update(const Rcpp::List& parameters) {
     i++;
   });
   
-  surv = R::pexp(death_pupae * dt, 1.0, 0, 0);
-  this->P.for_each([surv](arma::Mat<int>::elem_type& val) {
-    if (val > 0) {
-      val = R::rbinom(val, surv);
-    }
-  });
-  this->P_I.for_each([surv](arma::Mat<int>::elem_type& val) {
-    if (val > 0) {
-      val = R::rbinom(val, surv);
-    }
-  });
-  
-  surv = R::pexp(death_adult * dt, 1.0, 0, 0);
-  this->A_S.for_each([surv](arma::Row<int>::elem_type& val) {
-    if (val > 0) {
-      val = R::rbinom(val, surv);
-    }
-  });
-  this->A_E.for_each([surv](arma::Mat<int>::elem_type& val) {
-    if (val > 0) {
-      val = R::rbinom(val, surv);
-    }
-  });
-  this->A_I.for_each([surv](arma::Row<int>::elem_type& val) {
-    if (val > 0) {
-      val = R::rbinom(val, surv);
-    }
-  });
-  S2E.for_each([surv](arma::Row<int>::elem_type& val) {
-    if (val > 0) {
-      val = R::rbinom(val, surv);
-    }
+  // larval survival
+  i = 0;
+  this->L.each_col([&i, &death_larvae_dd, dt = this->dt](arma::Col<int>& val) {
+    double surv = R::pexp(death_larvae_dd(i) * dt, 1.0, 0, 0);
+    val.for_each([surv](arma::Col<int>::elem_type& val) {
+      if (val > 0) {
+        val = R::rbinom(val, surv);
+      }
+    });
+    i++;
   });
   
+  i = 0;
+  this->L_I.each_col([&i, &death_larvae_dd, dt = this->dt](arma::Col<int>& val) {
+    double surv = R::pexp(death_larvae_dd(i) * dt, 1.0, 0, 0);
+    val.for_each([surv](arma::Col<int>::elem_type& val) {
+      if (val > 0) {
+        val = R::rbinom(val, surv);
+      }
+    });
+    i++;
+  });
+
+  // i = 0;
+  // this->L.each_col([&death_larvae_tot, &i, dt = this->dt](arma::Col<int>& val) {
+  //   double surv = R::pexp(death_larvae_tot[i] * dt, 1.0, 0, 0);
+  //   val.for_each([surv](arma::Col<int>::elem_type& val) {
+  //     if (val > 0) {
+  //       val = R::rbinom(val, surv);
+  //     }
+  //   });
+  //   i++;
+  // });
+  // 
+  // i = 0;
+  // this->L_I.each_col([&death_larvae_tot, &i, dt = this->dt](arma::Col<int>& val) {
+  //   double surv = R::pexp(death_larvae_tot[i] * dt, 1.0, 0, 0);
+  //   val.for_each([surv](arma::Col<int>::elem_type& val) {
+  //     if (val > 0) {
+  //       val = R::rbinom(val, surv);
+  //     }
+  //   });
+  //   i++;
+  // });
+  
+  // pupae survival
+  i = 0;
+  this->P.each_col([&i, &death_pupae, dt = this->dt](arma::Col<int>& val) {
+    double surv = R::pexp(death_pupae(i) * dt, 1.0, 0, 0);
+    val.for_each([surv](arma::Col<int>::elem_type& val) {
+      if (val > 0) {
+        val = R::rbinom(val, surv);
+      }
+    });
+    i++;
+  });
+  
+  i = 0;
+  this->P_I.each_col([&i, &death_pupae, dt = this->dt](arma::Col<int>& val) {
+    double surv = R::pexp(death_pupae(i) * dt, 1.0, 0, 0);
+    val.for_each([surv](arma::Col<int>::elem_type& val) {
+      if (val > 0) {
+        val = R::rbinom(val, surv);
+      }
+    });
+    i++;
+  });
+  
+  // surv = R::pexp(death_pupae * dt, 1.0, 0, 0);
+  // this->P.for_each([surv](arma::Mat<int>::elem_type& val) {
+  //   if (val > 0) {
+  //     val = R::rbinom(val, surv);
+  //   }
+  // });
+  // this->P_I.for_each([surv](arma::Mat<int>::elem_type& val) {
+  //   if (val > 0) {
+  //     val = R::rbinom(val, surv);
+  //   }
+  // });
+  
+  // adult survival
+  i = 0;
+  this->A_S.for_each([&i, &death_adult, dt = this->dt](arma::Row<int>::elem_type& val) {
+    if (val > 0) {
+      val = R::rbinom(val, R::pexp(death_adult(i) * dt, 1.0, 0, 0));
+    }
+    i++;
+  });
+  
+  i = 0;
+  this->A_E.each_col([&i, &death_adult, dt = this->dt](arma::Col<int>& val) {
+    double surv = R::pexp(death_adult(i) * dt, 1.0, 0, 0);
+    val.for_each([surv](arma::Col<int>::elem_type& val) {
+      if (val > 0) {
+        val = R::rbinom(val, surv);
+      }
+    });
+    i++;
+  });
+  
+  i = 0;
+  this->A_I.for_each([&i, &death_adult, dt = this->dt](arma::Row<int>::elem_type& val) {
+    if (val > 0) {
+      val = R::rbinom(val, R::pexp(death_adult(i) * dt, 1.0, 0, 0));
+    }
+    i++;
+  });
+  
+  i = 0;
+  S2E.for_each([&i, &death_adult, dt = this->dt](arma::Row<int>::elem_type& val) {
+    if (val > 0) {
+      val = R::rbinom(val, R::pexp(death_adult(i) * dt, 1.0, 0, 0));
+    }
+    i++;
+  });
+
+  // surv = R::pexp(death_adult * dt, 1.0, 0, 0);
+  // this->A_S.for_each([surv](arma::Row<int>::elem_type& val) {
+  //   if (val > 0) {
+  //     val = R::rbinom(val, surv);
+  //   }
+  // });
+  // this->A_E.for_each([surv](arma::Mat<int>::elem_type& val) {
+  //   if (val > 0) {
+  //     val = R::rbinom(val, surv);
+  //   }
+  // });
+  // this->A_I.for_each([surv](arma::Row<int>::elem_type& val) {
+  //   if (val > 0) {
+  //     val = R::rbinom(val, surv);
+  //   }
+  // });
+  // S2E.for_each([surv](arma::Row<int>::elem_type& val) {
+  //   if (val > 0) {
+  //     val = R::rbinom(val, surv);
+  //   }
+  // });
+
   // dispersal
   arma::Row<int> A_move(this->p, arma::fill::zeros);
   arma::Row<int> tmp(this->p, arma::fill::zeros);
@@ -308,7 +471,7 @@ inline void culex_inf<int>::update(const Rcpp::List& parameters) {
     A_move += tmp;
   }
   this->A_S = A_move;
-  
+
   for (auto j = 0u; j < this->A_E.n_rows; ++j) {
     A_move.zeros();
     tmp.zeros();
@@ -326,7 +489,7 @@ inline void culex_inf<int>::update(const Rcpp::List& parameters) {
     A_move += tmp;
   }
   this->A_I = A_move;
-  
+
   A_move.zeros();
   tmp.zeros();
   for (auto i = 0u; i < this->p; ++i) {
@@ -336,43 +499,43 @@ inline void culex_inf<int>::update(const Rcpp::List& parameters) {
   S2E = A_move;
 
   // advancement
-  
+
   // uninfected immatures
   arma::Row<int> E2L = this->E.row(0);
   this->E.row(0).zeros();
   this->E = this->shiftE * this->E;
   this->E.row(tau_E-1) += lambda;
-  
+
   arma::Row<int> L2P = this->L.row(0);
   this->L.row(0).zeros();
   this->L = this->shiftL * this->L;
   this->L.row(tau_L-1) += E2L;
-  
+
   arma::Row<int> P2A = this->P.row(0);
   this->P.row(0).zeros();
   this->P = this->shiftP * this->P;
   this->P.row(tau_P-1) += L2P;;
-  
+
   this->A_S += P2A;
-  
+
   // infected immatures
   E2L = this->E_I.row(0);
   this->E_I.row(0).zeros();
   this->E_I = this->shiftE * this->E_I;
   this->E_I.row(tau_E-1) += lambda_I;
-  
+
   L2P = this->L_I.row(0);
   this->L_I.row(0).zeros();
   this->L_I = this->shiftL * this->L_I;
   this->L_I.row(tau_L-1) += E2L;
-  
+
   P2A = this->P_I.row(0);
   this->P_I.row(0).zeros();
   this->P_I = this->shiftP * this->P_I;
   this->P_I.row(tau_P-1) += L2P;
-  
+
   this->A_I += P2A;
-  
+
   // extrinsic incubation period
   arma::Row<int> E2I = this->A_E.row(0);
   this->A_E.row(0).zeros();
@@ -380,7 +543,7 @@ inline void culex_inf<int>::update(const Rcpp::List& parameters) {
   this->A_E.row(tau_EIP-1) += S2E;
 
   this->A_I += E2I;
-  
+
   // advance time step
   this->step += 1;
 
@@ -389,54 +552,81 @@ inline void culex_inf<int>::update(const Rcpp::List& parameters) {
 // deterministic update
 template <>
 inline void culex_inf<double>::update(const Rcpp::List& parameters) {
-  
+
   double tnow = this->step * this->dt;
   int tau_E = this->tau_E[this->step];
   int tau_L = this->tau_L[this->step];
   int tau_P = this->tau_P[this->step];
   int tau_EIP = this->tau_EIP[this->step];
-  
+
   double p0 = parameters["p0"];
   double p1 = parameters["p1"];
   double pvt = parameters["pvt"];
+
+  // // temperature
+  // double temp = temperature(tnow, parameters);
+  // 
+  // // photoperiod
+  // double pp = photoperiod(tnow, parameters);
+  // double pp_1 = photoperiod(tnow - 1.0, parameters);
+  // 
+  // // gonotrophic cycle
+  // double gon = gonotrophic(temp, parameters);
+  // 
+  // // mortality
+  // double death_egg = death_egg_rate(temp, parameters);
+  // double death_larvae = death_larvae_rate(temp, parameters);
+  // double death_pupae = death_pupae_rate(temp, parameters);
+  // double death_adult = death_adult_rate(temp, parameters);
+  // 
+  // // larval mortality depends on total larvae (both S and I)
+  // arma::Row<double> larvae_tot = arma::sum(this->L, 0) + arma::sum(this->L_I, 0);
+  // std::vector<double> death_larvae_tot(this->p, death_larvae);
+  // for (auto i = 0u; i < this->p; ++i) {
+  //   death_larvae_tot[i] += p0 * larvae_tot(i) / (p1 + larvae_tot(i));
+  // }
+  // 
+  // // diapause and egg laying
+  // double dia;
+  // if (pp > pp_1) {
+  //   dia = diapause_spring(pp);
+  // } else {
+  //   dia = diapause_autumn(pp);
+  // }
   
   // temperature
-  double temp = temperature(tnow, parameters);
+  arma::Col<double> temp = this->temperature.col(step);
   
-  // photoperiod
-  double pp = photoperiod(tnow, parameters);
-  double pp_1 = photoperiod(tnow - 1.0, parameters);
+  // diapause
+  arma::Col<double> dia = this->diapause.col(step);
   
   // gonotrophic cycle
-  double gon = gonotrophic(temp, parameters);
+  arma::Col<double> gon = this->gonotrophic_cycle(temp, dia);
+  
+  // oviposition
+  arma::Col<double> ovi = this->oviposition(gon);
   
   // mortality
-  double death_egg = death_egg_rate(temp, parameters);
-  double death_larvae = death_larvae_rate(temp, parameters);
-  double death_pupae = death_pupae_rate(temp, parameters);
-  double death_adult = death_adult_rate(temp, parameters);
+  arma::Col<double> death_egg = this->mort_egg(temp);
+  arma::Col<double> death_larvae = this->mort_larvae(temp);
+  arma::Col<double> death_pupae = this->mort_pupae(temp);
+  arma::Col<double> death_adult = this->mort_adult(temp);
   
   // larval mortality depends on total larvae (both S and I)
   arma::Row<double> larvae_tot = arma::sum(this->L, 0) + arma::sum(this->L_I, 0);
-  std::vector<double> death_larvae_tot(this->p, death_larvae);
+  arma::Col<double> death_larvae_dd = death_larvae;
   for (auto i = 0u; i < this->p; ++i) {
-    death_larvae_tot[i] += p0 * larvae_tot(i) / (p1 + larvae_tot(i));
+    death_larvae_dd(i) += p0 * larvae_tot(i) / (p1 + larvae_tot(i));
   }
-  
-  // diapause and egg laying
-  double dia;
-  if (pp > pp_1) {
-    dia = diapause_spring(pp);
-  } else {
-    dia = diapause_autumn(pp);
-  }
-  
+
   // egg laying
   arma::Row<double> lambda = this->A_S + arma::sum(this->A_E, 0) + (this->A_I * (1.0 - pvt));
-  lambda *= oviposition(dia, gon, parameters) * this->dt;
-  
-  arma::Row<double> lambda_I = (this->A_I * pvt) * oviposition(dia, gon, parameters) * this->dt;
-  
+  // lambda *= oviposition(dia, gon, parameters) * this->dt;
+  lambda %= ovi.t() * this->dt;
+
+  // arma::Row<double> lambda_I = (this->A_I * pvt) * oviposition(dia, gon, parameters) * this->dt;
+  arma::Row<double> lambda_I = (this->A_I * pvt) % ovi.t() * this->dt;
+
   // infections
   arma::Row<double> h = this->f % arma::sum(this->q % this->kappa, 0);
   arma::Row<double> S2E(this->p, arma::fill::zeros);
@@ -444,91 +634,166 @@ inline void culex_inf<double>::update(const Rcpp::List& parameters) {
     S2E(i) = this->A_S(i) * R::pexp(h(i) * this->dt, 1.0, 1, 0);
   }
   this->A_S -= S2E;
-  
+
   // survival
-  double surv = R::pexp(death_egg * dt, 1.0, 0, 0);
-  this->E *= surv;
-  this->E_I *= surv;
   
+  // egg survival
   int i{0};
-  this->L.each_col([&death_larvae_tot, &i, dt = this->dt](arma::Col<double>& val) {
-    double surv = R::pexp(death_larvae_tot[i] * dt, 1.0, 0, 0);
+  this->E.each_col([&i, &death_egg, dt = this->dt](arma::Col<double>& val) {
+    double surv = R::pexp(death_egg(i) * dt, 1.0, 0, 0);
     val *= surv;
     i++;
   });
   
   i = 0;
-  this->L_I.each_col([&death_larvae_tot, &i, dt = this->dt](arma::Col<double>& val) {
-    double surv = R::pexp(death_larvae_tot[i] * dt, 1.0, 0, 0);
+  this->E_I.each_col([&i, &death_egg, dt = this->dt](arma::Col<double>& val) {
+    double surv = R::pexp(death_egg(i) * dt, 1.0, 0, 0);
     val *= surv;
     i++;
   });
   
-  surv = R::pexp(death_pupae * dt, 1.0, 0, 0);
-  this->P *= surv;
-  this->P_I *= surv;
+  // double surv = R::pexp(death_egg * dt, 1.0, 0, 0);
+  // this->E *= surv;
+  // this->E_I *= surv;
   
-  surv = R::pexp(death_adult * dt, 1.0, 0, 0);
-  this->A_S *= surv;
-  this->A_E *= surv;
-  this->A_I *= surv;
-  S2E *= surv;
+  // larvae survival
+  i = 0;
+  this->L.each_col([&death_larvae_dd, &i, dt = this->dt](arma::Col<double>& val) {
+    double surv = R::pexp(death_larvae_dd(i) * dt, 1.0, 0, 0);
+    val *= surv;
+    i++;
+  });
   
+  i = 0;
+  this->L_I.each_col([&death_larvae_dd, &i, dt = this->dt](arma::Col<double>& val) {
+    double surv = R::pexp(death_larvae_dd(i) * dt, 1.0, 0, 0);
+    val *= surv;
+    i++;
+  });
+
+  // int i{0};
+  // this->L.each_col([&death_larvae_tot, &i, dt = this->dt](arma::Col<double>& val) {
+  //   double surv = R::pexp(death_larvae_tot[i] * dt, 1.0, 0, 0);
+  //   val *= surv;
+  //   i++;
+  // });
+  // 
+  // i = 0;
+  // this->L_I.each_col([&death_larvae_tot, &i, dt = this->dt](arma::Col<double>& val) {
+  //   double surv = R::pexp(death_larvae_tot[i] * dt, 1.0, 0, 0);
+  //   val *= surv;
+  //   i++;
+  // });
+  
+  // pupae survival
+  i = 0;
+  this->P.each_col([&i, &death_pupae, dt = this->dt](arma::Col<double>& val) {
+    double surv = R::pexp(death_pupae(i) * dt, 1.0, 0, 0);
+    val *= surv;
+    i++;
+  });
+  
+  i = 0;
+  this->P_I.each_col([&i, &death_pupae, dt = this->dt](arma::Col<double>& val) {
+    double surv = R::pexp(death_pupae(i) * dt, 1.0, 0, 0);
+    val *= surv;
+    i++;
+  });
+  
+  // surv = R::pexp(death_pupae * dt, 1.0, 0, 0);
+  // this->P *= surv;
+  // this->P_I *= surv;
+  
+  // adult survival
+  i = 0;
+  this->A_S.for_each([&i, &death_adult, dt = this->dt](arma::Row<double>::elem_type& val) {
+    double surv = R::pexp(death_adult(i) * dt, 1.0, 0, 0);  
+    val *= surv;
+    i++;
+  });
+  
+  i = 0;
+  this->A_E.each_col([&i, &death_adult, dt = this->dt](arma::Col<double>& val) {
+    double surv = R::pexp(death_adult(i) * dt, 1.0, 0, 0);
+    val *= surv;
+    i++;
+  });
+  
+  i = 0;
+  this->A_I.for_each([&i, &death_adult, dt = this->dt](arma::Row<double>::elem_type& val) {
+    double surv = R::pexp(death_adult(i) * dt, 1.0, 0, 0);  
+    val *= surv;
+    i++;
+  });
+  
+  i = 0;
+  S2E.for_each([&i, &death_adult, dt = this->dt](arma::Row<double>::elem_type& val) {
+    double surv = R::pexp(death_adult(i) * dt, 1.0, 0, 0);  
+    val *= surv;
+    i++;
+  });
+  
+  // surv = R::pexp(death_adult * dt, 1.0, 0, 0);
+  // this->A_S *= surv;
+  // this->A_E *= surv;
+  // this->A_I *= surv;
+  // S2E *= surv;
+
   // dispersal
   this->A_S = this->A_S * this->psi;
   this->A_E = this->A_E * this->psi;
   this->A_I = this->A_I * this->psi;
   S2E *= this->psi;
-  
+
   // advancement
-  
+
   // uninfected immatures
   arma::Row<double> E2L = this->E.row(0);
   this->E.row(0).zeros();
   this->E = this->shiftE * this->E;
   this->E.row(tau_E-1) += lambda;
-  
+
   arma::Row<double> L2P = this->L.row(0);
   this->L.row(0).zeros();
   this->L = this->shiftL * this->L;
   this->L.row(tau_L-1) += E2L;
-  
+
   arma::Row<double> P2A = this->P.row(0);
   this->P.row(0).zeros();
   this->P = this->shiftP * this->P;
   this->P.row(tau_P-1) += L2P;;
-  
+
   this->A_S += P2A;
-  
+
   // infected immatures
   E2L = this->E_I.row(0);
   this->E_I.row(0).zeros();
   this->E_I = this->shiftE * this->E_I;
   this->E_I.row(tau_E-1) += lambda_I;
-  
+
   L2P = this->L_I.row(0);
   this->L_I.row(0).zeros();
   this->L_I = this->shiftL * this->L_I;
   this->L_I.row(tau_L-1) += E2L;
-  
+
   P2A = this->P_I.row(0);
   this->P_I.row(0).zeros();
   this->P_I = this->shiftP * this->P_I;
   this->P_I.row(tau_P-1) += L2P;
-  
+
   this->A_I += P2A;
-  
+
   // extrinsic incubation period
   arma::Row<double> E2I = this->A_E.row(0);
   this->A_E.row(0).zeros();
   this->A_E = this->shiftEIP * this->A_E;
   this->A_E.row(tau_EIP-1) += S2E;
-  
+
   this->A_I += E2I;
-  
+
   // advance time step
   this->step += 1;
-  
+
 };
 
 

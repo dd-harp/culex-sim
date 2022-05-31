@@ -22,24 +22,24 @@ Rcpp::List tau_diffeqn(const double t, const Rcpp::NumericVector& y, const Rcpp:
   double DEIP = y[3]; // tau_EIP(t)
   
   // temperature
-  double temp = temperature(t, params);
-  double temp_E = temperature(t - DE, params);
-  double temp_L = temperature(t - DL, params);
-  double temp_P = temperature(t - DP, params);
-  double temp_EIP = temperature(t - DEIP, params);
+  double temp = temperature_ewing(t, params);
+  double temp_E = temperature_ewing(t - DE, params);
+  double temp_L = temperature_ewing(t - DL, params);
+  double temp_P = temperature_ewing(t - DP, params);
+  double temp_EIP = temperature_ewing(t - DEIP, params);
 
   // development
-  double larvae_maturation = larvae_maturation_rate(temp, params);
-  double larvae_maturation_L = larvae_maturation_rate(temp_L, params);
+  double larvae_maturation = larvae_maturation_rate_ewing(temp, params);
+  double larvae_maturation_L = larvae_maturation_rate_ewing(temp_L, params);
         
-  double egg_maturation = egg_maturation_rate(temp, params);
-  double egg_maturation_E = egg_maturation_rate(temp_E, params);
+  double egg_maturation = egg_maturation_rate_ewing(temp, params);
+  double egg_maturation_E = egg_maturation_rate_ewing(temp_E, params);
 
-  double pupae_maturation = pupae_maturation_rate(temp, params);
-  double pupae_maturation_P = pupae_maturation_rate(temp_P, params);
+  double pupae_maturation = pupae_maturation_rate_ewing(temp, params);
+  double pupae_maturation_P = pupae_maturation_rate_ewing(temp_P, params);
   
-  double incubation = eip_rate(temp, params);
-  double incubation_EIP = eip_rate(temp_EIP, params);
+  double incubation = eip_rate_ewing(temp, params);
+  double incubation_EIP = eip_rate_ewing(temp_EIP, params);
 
   // ODEs describing change in state duration
   double dDEdt = 1.0 - egg_maturation/egg_maturation_E;

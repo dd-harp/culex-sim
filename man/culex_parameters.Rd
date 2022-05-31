@@ -37,13 +37,18 @@ culex_parameters(
   V = 200,
   death_max = 1,
   death_min_a = 0.01,
+  gon_zero_temp = 0.0333,
   gon_min = 0.0333,
   maturation_min = 0.016667,
   eip_q = 7.83e-05,
   eip_tmax = 45.2,
   eip_tmin = 11.4,
   eip_min = 0.005,
-  pvt = 0.004
+  pvt = 0.004,
+  n_patch = 1,
+  psi = matrix(data = 1, nrow = 1, ncol = 1),
+  temperature = NaN,
+  diapause = NaN
 )
 }
 \arguments{
@@ -111,6 +116,8 @@ culex_parameters(
 
 \item{death_min_a}{minimum death rate for adult stage}
 
+\item{gon_zero_temp}{gonotrophic cycle rate when temperature is below zero}
+
 \item{gon_min}{minimum rate of gonotrophic cycle}
 
 \item{maturation_min}{minimum rate of aquatic stage development}
@@ -124,6 +131,14 @@ culex_parameters(
 \item{eip_min}{minimum rate of EIP progression}
 
 \item{pvt}{probability of vertical transmission (per egg)}
+
+\item{n_patch}{number of patches (spatial locations)}
+
+\item{psi}{movement matrix}
+
+\item{temperature}{a matrix of temperature values for patches (rows) by time step (columns)}
+
+\item{diapause}{a matrix of diapause percentage for patches (rows) by time step (columns)}
 }
 \description{
 Most of these parameters can be found \href{https://github.com/davewi13/Temperate-Mosquito-DDE/blob/master/Chapter\%202\%20DDE\%20code.f90}{here}.

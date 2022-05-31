@@ -5,19 +5,16 @@
 \title{Create stochastic culex infection model object}
 \usage{
 create_culex_infection_stochastic(
-  p,
   tau_E,
   tau_L,
   tau_P,
   tau_EIP,
   dt,
-  psi,
+  parameters,
   n_species
 )
 }
 \arguments{
-\item{p}{number of patches}
-
 \item{tau_E}{vector of egg delays}
 
 \item{tau_L}{vector of larvae delays}
@@ -28,7 +25,7 @@ create_culex_infection_stochastic(
 
 \item{dt}{size of time step}
 
-\item{psi}{adult movement matrix}
+\item{parameters}{a \link{list} of parameters}
 
 \item{n_species}{number of host species}
 }

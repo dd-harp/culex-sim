@@ -35,7 +35,7 @@ explanation of parameters and simulation workflow.
 
 
 ```{r}
-parameters <- culex_parameters()
+parameters <- culex_parameters(n_patch = 2)
 
 dt <- 0.1
 tmax <- 365*3
@@ -50,6 +50,7 @@ psi <- matrix(
            0.025, 0.975),
   nrow = 2, ncol = 2, byrow = TRUE
 )
+parameters$psi <- psi
 
 # delays at t=0
 tau0 <- c("E"=0,"L"=0,"P"=0,"EIP"=0)
@@ -80,12 +81,34 @@ tauP <- as.integer(tau_traj[step_forward_P %in% 1:maxstep, "P"][[1]])
 tauEIP <- as.integer(tau_traj[step_forward_EIP %in% 1:maxstep, "EIP"][[1]])
 ```
 
+Now we must precompute the temperature and diapause percentage, which are used as external forcing to the simulation. Diapause
+depends on photoperiod. Let's assume that the two patches are in roughly the same location so that they can use the same temperature
+series.
+
+```{r}
+# compute temperature and diapause input
+time_steps <- cumsum(rep(dt, maxstep)) - dt
+temp_steps <- vapply(X = time_steps, FUN = function(t) {temperature(t = t, pars = parameters)}, FUN.VALUE = numeric(1), USE.NAMES = FALSE)
+dia_steps <- vapply(X = seq_along(time_steps), FUN = function(t) {
+  pp <- photoperiod(time_steps[t], parameters)
+  pp_lag <- photoperiod(time_steps[t] - 1.0, parameters)
+  if (pp > pp_lag) {
+    return(diapause_spring(pp))
+  } else {
+    return(diapause_autumn(pp))
+  }
+}, FUN.VALUE = numeric(1), USE.NAMES = FALSE)
+
+parameters$temperature <- rbind(temp_steps, temp_steps)
+parameters$diapause <- rbind(dia_steps, dia_steps)
+```
+
 Let's draw the deterministic trajectories. Because we don't set `f`, `q`, or `kappa`,
 they will all be zero and no infection should occur.
 
 ```{r}
 # solve a determiinistic trajectory
-mod <- create_culex_deterministic(p = 2, tau_E = tauE, tau_L = tauL, tau_P = tauP, dt = dt, psi = psi)
+mod <- create_culex_deterministic(tau_E = tauE, tau_L = tauL, tau_P = tauP, dt = dt, parameters = parameters)
 set_A_deterministic(mod = mod, A = A0)
 
 out_d <- data.table(day = rep(1:tmax, each = 8), stage = rep(c("E","L","P","A"), tmax*2), patch = rep(c(1,1,1,1,2,2,2,2), tmax), value = NaN)
@@ -105,7 +128,7 @@ for (i in 1:maxstep) {
 }
 
 # solve a deterministic trajectory from model with infection dynamics
-mod <- create_culex_infection_deterministic(p = 2, tau_E = tauE, tau_L = tauL, tau_P = tauP, tau_EIP = tauEIP, dt = dt, psi = psi, n_species = 1)
+mod <- create_culex_infection_deterministic(tau_E = tauE, tau_L = tauL, tau_P = tauP, tau_EIP = tauEIP, dt = dt, parameters = parameters, n_species = 1)
 set_AS_infection_deterministic(mod = mod, A = A0)
 
 out_d_inf <- data.table(day = rep(1:tmax, each = 8), stage = rep(c("E","L","P","A"), tmax*2), patch = rep(c(1,1,1,1,2,2,2,2), tmax), value = NaN)
@@ -140,7 +163,7 @@ We will draw 10 samples from the stochastic model.
 out <- parallel::mclapply(X = 1:10, FUN = function(runid) {
   
   # lifecycle
-  mod <- create_culex_stochastic(p = 2, tau_E = tauE, tau_L = tauL, tau_P = tauP, dt = dt, psi = psi)
+  mod <- create_culex_stochastic(tau_E = tauE, tau_L = tauL, tau_P = tauP, dt = dt, parameters = parameters)
   set_A_stochastic(mod = mod, A = A0)
 
   out <- data.table(day = rep(1:tmax, each = 8), stage = rep(c("E","L","P","A"), tmax*2), patch = rep(c(1,1,1,1,2,2,2,2), tmax), value = NaN)
@@ -160,7 +183,7 @@ out <- parallel::mclapply(X = 1:10, FUN = function(runid) {
   }
   
   # infection
-  mod <- create_culex_infection_stochastic(p = 2, tau_E = tauE, tau_L = tauL, tau_P = tauP, tau_EIP = tauEIP, dt = dt, psi = psi, n_species = 1)
+  mod <- create_culex_infection_stochastic(tau_E = tauE, tau_L = tauL, tau_P = tauP, tau_EIP = tauEIP, dt = dt, parameters = parameters, n_species = 1)
   set_AS_infection_stochastic(mod = mod, A = A0)
   
   out_inf <- data.table(day = rep(1:tmax, each = 8), stage = rep(c("E","L","P","A"), tmax*2), patch = rep(c(1,1,1,1,2,2,2,2), tmax), value = NaN)

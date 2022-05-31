@@ -197,11 +197,11 @@ culex_dde <- function(t,y,params){
   
   
   # (lagged) photoperiod
-  pp <- daylight(t, params)
-  pp_1 <- daylight(t - 1, params)
-  pp_E <- daylight(t - DE, params)
-  pp_EL <- daylight(t - DL - Z4[8], params)
-  pp_ELP <- daylight(t - DP - Z6[9] - Z5[8], params)
+  pp <- photoperiod(t, params)
+  pp_1 <- photoperiod(t - 1, params)
+  pp_E <- photoperiod(t - DE, params)
+  pp_EL <- photoperiod(t - DL - Z4[8], params)
+  pp_ELP <- photoperiod(t - DP - Z6[9] - Z5[8], params)
   
   # (lagged) gonotrophic cycle
   gon <- gonotrophic(temp, params)

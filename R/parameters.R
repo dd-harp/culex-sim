@@ -32,6 +32,7 @@
 #' @param V larval predation
 #' @param death_max maximum death rate for aquatic stages
 #' @param death_min_a minimum death rate for adult stage
+#' @param gon_zero_temp gonotrophic cycle rate when temperature is below zero
 #' @param gon_min minimum rate of gonotrophic cycle
 #' @param maturation_min minimum rate of aquatic stage development
 #' @param eip_q EIP parameter
@@ -39,6 +40,10 @@
 #' @param eip_tmin EIP parameter
 #' @param eip_min minimum rate of EIP progression
 #' @param pvt probability of vertical transmission (per egg)
+#' @param n_patch number of patches (spatial locations)
+#' @param psi movement matrix
+#' @param temperature a matrix of temperature values for patches (rows) by time step (columns)
+#' @param diapause a matrix of diapause percentage for patches (rows) by time step (columns)
 #' @export
 culex_parameters <- function(
   phi = 1.4,
@@ -73,13 +78,18 @@ culex_parameters <- function(
   V = 200,
   death_max = 1.0,
   death_min_a = 0.01,
+  gon_zero_temp = 0.0333,
   gon_min = 0.0333,
   maturation_min = 0.016667,
   eip_q = 7.83e-5,
   eip_tmax = 45.2,
   eip_tmin = 11.4,
   eip_min = 0.005,
-  pvt = 0.004
+  pvt = 0.004,
+  n_patch = 1,
+  psi = matrix(data = 1, nrow = 1, ncol = 1),
+  temperature = NaN,
+  diapause = NaN
 ) {
   pars <- list(
     phi = phi,
@@ -114,13 +124,18 @@ culex_parameters <- function(
     V = V,
     death_max = death_max,
     death_min_a = death_min_a,
+    gon_zero_temp = gon_zero_temp,
     gon_min = gon_min,
     maturation_min = maturation_min,
     eip_q = eip_q,
     eip_tmax = eip_tmax,
     eip_tmin = eip_tmin,
     eip_min = eip_min,
-    pvt = pvt
+    pvt = pvt,
+    n_patch = n_patch,
+    psi = psi,
+    temperature = temperature,
+    diapause = diapause
   )
   pars[["p0"]] <- pars[["r"]] / pars[["h"]]
   pars[["p1"]] <- pars[["V"]] / (pars[["a"]] * pars[["h"]])

@@ -18,7 +18,7 @@ Description: This package implements discretized stochastic and deterministic mo
     for efficiency and the returned pointer object may be interacted with from R
     via an interface.
 License: MIT + file LICENSE
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 SystemRequirements: C++14
